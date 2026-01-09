@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { tvshowApi } from '@/lib/tvshowApi';
+import { tvshowApi, TvShowDetailData } from '@/lib/tvshowApi';
 import { LoadingGrid } from '@/components/LoadingSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -39,15 +39,39 @@ const TvShowDetail = ({ type }: TvShowDetailProps) => {
 
   const show = data.data;
 
+  const posterUrl = (show as any).poster || (show as any).image || '/placeholder.svg';
+  const info = (show as any).info as TvShowDetailData['info'] | undefined;
+
+  const displayType = show.type || info?.type || type;
+  const displayStatus = show.status || info?.status;
+  const displayYear = show.year || info?.release_date || info?.season;
+  const displayRating = show.rating || info?.rating;
+
+  const getGenreSlug = (url: string) => {
+    try {
+      const u = new URL(url);
+      const parts = u.pathname.split('/').filter(Boolean);
+      return parts[parts.length - 1] || '';
+    } catch {
+      const parts = url.split('/').filter(Boolean);
+      return parts[parts.length - 1] || '';
+    }
+  };
+
+  const genreItems =
+    (show as any).genres?.map((g: any) => ({ name: g.name, slug: g.slug })) ||
+    info?.genres?.map((g) => ({ name: g.name, slug: getGenreSlug(g.url) })) ||
+    [];
+
   return (
     <div className="min-h-screen bg-background">
       <div className="relative">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center opacity-20 blur-xl"
-          style={{ backgroundImage: `url(${show.poster})` }}
+          style={{ backgroundImage: `url(${posterUrl})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 to-background" />
-        
+
         <div className="container mx-auto px-4 py-8 relative z-10">
           <Link to="/tvshow" className="inline-flex items-center text-muted-foreground hover:text-primary mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" /> Back to TV Shows
@@ -57,53 +81,56 @@ const TvShowDetail = ({ type }: TvShowDetailProps) => {
             <div className="space-y-4">
               <div className="rounded-xl overflow-hidden shadow-2xl">
                 <img
-                  src={show.poster || '/placeholder.svg'}
+                  src={posterUrl}
                   alt={show.title}
                   className="w-full aspect-[2/3] object-cover"
+                  loading="lazy"
                 />
               </div>
             </div>
 
             <div className="space-y-6">
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-                  {show.title}
-                </h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{show.title}</h1>
                 {show.alternativeTitle && (
                   <p className="text-lg text-muted-foreground">{show.alternativeTitle}</p>
                 )}
               </div>
 
               <div className="flex flex-wrap gap-2">
-                {show.type && (
+                {displayType && (
                   <Badge className="bg-primary/20 text-primary">
-                    <Tv className="w-3 h-3 mr-1" /> {show.type}
+                    <Tv className="w-3 h-3 mr-1" /> {displayType}
                   </Badge>
                 )}
-                {show.status && (
-                  <Badge variant="outline">{show.status}</Badge>
-                )}
-                {show.year && (
+                {displayStatus && <Badge variant="outline">{displayStatus}</Badge>}
+                {displayYear && (
                   <Badge variant="secondary">
-                    <Calendar className="w-3 h-3 mr-1" /> {show.year}
+                    <Calendar className="w-3 h-3 mr-1" /> {displayYear}
                   </Badge>
                 )}
-                {show.rating && (
+                {displayRating && displayRating !== '-' && (
                   <Badge className="bg-accent/20 text-accent-foreground">
-                    <Star className="w-3 h-3 mr-1 fill-current" /> {show.rating}
+                    <Star className="w-3 h-3 mr-1 fill-current" /> {displayRating}
                   </Badge>
                 )}
               </div>
 
-              {show.genres && show.genres.length > 0 && (
+              {genreItems.length > 0 && (
                 <div className="flex flex-wrap gap-2">
-                  {show.genres.map((genre) => (
-                    <Link key={genre.slug} to={`/tvshow/genre/${genre.slug}`}>
-                      <Badge variant="outline" className="hover:bg-primary/20 cursor-pointer">
+                  {genreItems.map((genre) =>
+                    genre.slug ? (
+                      <Link key={`${genre.slug}-${genre.name}`} to={`/tvshow/genre/${genre.slug}`}>
+                        <Badge variant="outline" className="hover:bg-primary/20 cursor-pointer">
+                          {genre.name}
+                        </Badge>
+                      </Link>
+                    ) : (
+                      <Badge key={genre.name} variant="outline">
                         {genre.name}
                       </Badge>
-                    </Link>
-                  ))}
+                    )
+                  )}
                 </div>
               )}
 
@@ -126,7 +153,7 @@ const TvShowDetail = ({ type }: TvShowDetailProps) => {
                   <CardContent>
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
                       {show.episodes.map((episode) => (
-                        <Link key={episode.id} to={`/tvshow/episode/${episode.id}`}>
+                        <Link key={episode.id || episode.slug} to={`/tvshow/episode/${episode.id || episode.slug}`}>
                           <Button variant="outline" size="sm" className="w-full">
                             <Play className="w-3 h-3 mr-1" />
                             {episode.title}
