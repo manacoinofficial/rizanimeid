@@ -60,6 +60,9 @@ export default function AnimeHome() {
         <Link to="/anime/schedule">
           <Button variant="outline" size="sm">Jadwal</Button>
         </Link>
+        <Link to="/anime/live-action">
+        <Button variant="outline" size="sm">Live-action</Button>
+        </Link>
       </div>
 
       <div className="container mx-auto px-4 py-8 space-y-12">
