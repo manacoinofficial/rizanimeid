@@ -55,6 +55,13 @@ export default function AnimeHome() {
         </div>
       </section>
 
+      {/* Quick Links */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        <Link to="/anime/schedule">
+          <Button variant="outline" size="sm">Jadwal</Button>
+        </Link>
+      </div>
+
       <div className="container mx-auto px-4 py-8 space-y-12">
         {/* Error State */}
         {hasError && (
