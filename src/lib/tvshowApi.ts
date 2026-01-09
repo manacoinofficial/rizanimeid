@@ -15,26 +15,70 @@ export interface TvShowItem {
 }
 
 export interface TvShowDetailData {
-  id: string;
   title: string;
-  alternativeTitle?: string;
-  poster: string;
+  poster?: string;
+  image?: string;
   synopsis?: string;
+  alternativeTitle?: string;
+
+  // Some endpoints expose these at the top-level...
   status?: string;
   type?: string;
   year?: string;
   rating?: string;
-  genres?: { name: string; slug: string }[];
-  episodes?: { id: string; title: string; slug: string }[];
+
+  // ...while winbu detail endpoints expose them under `info`
+  info?: {
+    rating?: string;
+    season?: string;
+    genres?: { name: string; url: string }[];
+    status?: string;
+    type?: string;
+    episodes_count?: string;
+    duration?: string;
+    studio?: string;
+    release_date?: string;
+  };
+
+  episodes?: { id: string; title: string; slug?: string; link?: string }[];
+}
+
+export interface TvShowEpisodeServerRef {
+  resolution: string;
+  server: string;
+  data: {
+    post: string;
+    nume: string;
+    type: string;
+  };
 }
 
 export interface TvShowEpisodeData {
-  id: string;
   title: string;
+
+  // Old shape (some providers)
   streamUrl?: string;
   servers?: { id: string; name: string; url: string }[];
   prevEpisode?: { id: string; title: string };
   nextEpisode?: { id: string; title: string };
+
+  // Winbu shape
+  downloads?: {
+    resolution: string;
+    links: { server: string; url: string }[];
+  }[];
+  server?: TvShowEpisodeServerRef[];
+  navigation?: {
+    prev?: { id: string; link: string };
+    next?: { id: string; link: string };
+  };
+  all_episodes?: {
+    title: string;
+    url: string;
+    id: string;
+    active?: boolean;
+  }[];
+  embed_note?: string;
 }
 
 export interface TvShowGenre {
@@ -81,17 +125,24 @@ export const extractPagination = (response?: TvShowListResponse) => {
 };
 
 export interface TvShowDetailResponse {
-  success: boolean;
+  status: string;
+  type?: string;
   data: TvShowDetailData;
 }
 
 export interface TvShowEpisodeResponse {
-  success: boolean;
+  status: string;
   data: TvShowEpisodeData;
 }
 
+export interface TvShowServerEmbedResponse {
+  status: string;
+  embed_url?: string;
+  html?: string;
+}
+
 export interface TvShowGenresResponse {
-  success: boolean;
+  status: string;
   data: {
     genres: TvShowGenre[];
   };
@@ -105,7 +156,7 @@ export interface TvShowHomeData {
 }
 
 export interface TvShowHomeResponse {
-  success: boolean;
+  status: string;
   data: TvShowHomeData;
 }
 
@@ -159,6 +210,16 @@ export const tvshowApi = {
 
   getEpisode: async (id: string): Promise<TvShowEpisodeResponse> => {
     const response = await fetch(`${BASE_URL}/anime/winbu/episode/${id}`);
+    return response.json();
+  },
+
+  getServerEmbedUrl: async (params: { post: string; nume: string; type: string }): Promise<TvShowServerEmbedResponse> => {
+    const qs = new URLSearchParams({
+      post: params.post,
+      nume: params.nume,
+      type: params.type,
+    });
+    const response = await fetch(`${BASE_URL}/anime/winbu/server?${qs.toString()}`);
     return response.json();
   },
 
