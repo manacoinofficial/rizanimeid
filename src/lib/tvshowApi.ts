@@ -219,7 +219,7 @@ export const tvshowApi = {
       nume: params.nume,
       type: params.type,
     });
-    const response = await fetch(`${BASE_URL}/anime/winbu/server?${qs.toString()}`);
+    const response = await fetch(`${BASE_URL}/anime/winbu/server?post=${post}&nume=${nume}&type=${type}`);
     return response.json();
   },
 
