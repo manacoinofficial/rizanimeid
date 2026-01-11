@@ -33,6 +33,8 @@ export const Navbar = () => {
     { to: '/comic', label: 'Comic' },
     { to: '/novel', label: 'Novel' },
     { to: '/news', label: 'berita' },
+    { to: '/dramabox', label: 'dramachina' },
+    { to: '/install', label: 'aplikasi' },
     { to: '/tvshow', label: 'TV Show' },
   ];
 
