@@ -77,6 +77,13 @@ import TvShowAll from "./pages/tvshow/TvShowAll";
 import TvShowSchedule from "./pages/tvshow/TvShowSchedule";
 import TvShowList from "./pages/tvshow/TvShowList";
 
+// DramaBox pages
+import DramaBoxHome from "./pages/dramabox/DramaBoxHome";
+import DramaBoxLatest from "./pages/dramabox/DramaBoxLatest";
+import DramaBoxSearch from "./pages/dramabox/DramaBoxSearch";
+import DramaBoxDetail from "./pages/dramabox/DramaBoxDetail";
+import DramaBoxWatch from "./pages/dramabox/DramaBoxWatch";
+
 // Library page
 import Library from "./pages/Library";
 
@@ -200,6 +207,13 @@ const App = () => {
                 <Route path="/tvshow/all" element={<TvShowAll />} />
                 <Route path="/tvshow/schedule" element={<TvShowSchedule />} />
                 <Route path="/tvshow/list" element={<TvShowList />} />
+
+                {/* DramaBox Routes */}
+                <Route path="/dramabox" element={<DramaBoxHome />} />
+                <Route path="/dramabox/latest" element={<DramaBoxLatest />} />
+                <Route path="/dramabox/search" element={<DramaBoxSearch />} />
+                <Route path="/dramabox/detail/:bookId" element={<DramaBoxDetail />} />
+                <Route path="/dramabox/watch/:bookId/:episode" element={<DramaBoxWatch />} />
 
                 {/* Install PWA Route */}
                 <Route path="/install" element={<Install />} />
