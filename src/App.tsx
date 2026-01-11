@@ -83,6 +83,7 @@ import Library from "./pages/Library";
 // Auth page
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
+import Install from "./pages/Install";
 
 const queryClient = new QueryClient();
 
@@ -199,6 +200,9 @@ const App = () => {
                 <Route path="/tvshow/all" element={<TvShowAll />} />
                 <Route path="/tvshow/schedule" element={<TvShowSchedule />} />
                 <Route path="/tvshow/list" element={<TvShowList />} />
+
+                {/* Install PWA Route */}
+                <Route path="/install" element={<Install />} />
 
                 {/* Aliases (avoid 404 for old/expected URLs) */}
                 <Route path="/history" element={<Navigate to="/library" replace />} />
