@@ -3,11 +3,10 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { tvshowApi, TvShowEpisodeServerRef } from '@/lib/tvshowApi';
 import { useLevel } from '@/hooks/useLevel';
-import { LoadingGrid } from '@/components/LoadingSkeleton';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, ChevronLeft, ChevronRight, Tv } from 'lucide-react';
+import { ArrowLeft, ChevronLeft, ChevronRight, Tv, Download } from 'lucide-react';
 
 const TvShowEpisode = () => {
   const { id } = useParams<{ id: string }>();
@@ -33,9 +32,12 @@ const TvShowEpisode = () => {
 
   const serverRefs: TvShowEpisodeServerRef[] = useMemo(() => {
     if (!episode) return [];
-    // Winbu format: `server`
-    const winbuServers = (episode as any).server as TvShowEpisodeServerRef[] | undefined;
-    if (Array.isArray(winbuServers)) return winbuServers;
+    // Winbu format: API returns `streams` for streaming servers
+    const streams = episode.streams as TvShowEpisodeServerRef[] | undefined;
+    if (Array.isArray(streams)) return streams;
+    // Fallback to `server` if present
+    const servers = episode.server as TvShowEpisodeServerRef[] | undefined;
+    if (Array.isArray(servers)) return servers;
     return [];
   }, [episode]);
 
@@ -67,6 +69,25 @@ const TvShowEpisode = () => {
     }
   };
 
+  // Try to fetch embed from servers, fallback to next if current returns null
+  const fetchEmbedWithFallback = async (servers: TvShowEpisodeServerRef[]) => {
+    setLoadingEmbed(true);
+    for (const ref of servers) {
+      try {
+        const res = await tvshowApi.getServerEmbedUrl(ref.data);
+        if (res.embed_url) {
+          setEmbedUrl(res.embed_url);
+          setLoadingEmbed(false);
+          return;
+        }
+      } catch (e) {
+        // Continue to next server
+      }
+    }
+    setEmbedUrl('');
+    setLoadingEmbed(false);
+  };
+
   // Pick a default server and resolve embed URL
   useEffect(() => {
     if (!serverRefs.length) return;
@@ -74,9 +95,9 @@ const TvShowEpisode = () => {
     const defaultRef = serverRefs[0];
     if (!activeResolution) setActiveResolution(defaultRef.resolution);
 
-    // Only fetch when we don't have an embed yet (or when episode changes)
+    // Try all servers with fallback
     setEmbedUrl('');
-    fetchEmbed(defaultRef);
+    fetchEmbedWithFallback(serverRefs);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, serverRefs.length]);
 
@@ -89,7 +110,13 @@ const TvShowEpisode = () => {
     return all?.find((e) => e.id === episodeId)?.title;
   };
 
-  if (isLoading) return <LoadingGrid />;
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+      </div>
+    );
+  }
 
   if (error || !episode) {
     return (
@@ -182,6 +209,40 @@ const TvShowEpisode = () => {
             </Card>
           )}
 
+          {/* Downloads */}
+          {episode.downloads && episode.downloads.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Download className="w-5 h-5" /> Download
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {episode.downloads.map((dl, idx) => (
+                    <div key={idx}>
+                      <h4 className="text-sm font-medium text-muted-foreground mb-2">{dl.resolution}</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {dl.links.map((link, linkIdx) => (
+                          <a
+                            key={linkIdx}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Button variant="outline" size="sm">
+                              {link.server}
+                            </Button>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Navigation */}
           <div className="flex justify-between">
             {prevId && prevId !== '#' ? (
@@ -211,4 +272,3 @@ const TvShowEpisode = () => {
 };
 
 export default TvShowEpisode;
-

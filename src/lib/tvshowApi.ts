@@ -68,6 +68,7 @@ export interface TvShowEpisodeData {
     links: { server: string; url: string }[];
   }[];
   server?: TvShowEpisodeServerRef[];
+  streams?: TvShowEpisodeServerRef[];  // API returns "streams" for streaming servers
   navigation?: {
     prev?: { id: string; link: string };
     next?: { id: string; link: string };
