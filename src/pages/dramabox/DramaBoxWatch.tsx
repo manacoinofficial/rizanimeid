@@ -1,23 +1,44 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ChevronLeft, ChevronRight, ArrowLeft, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
 import { dramaboxApi } from '@/lib/dramaboxApi';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useState } from 'react';
 
 const DramaBoxWatch = () => {
   const { bookId, episode } = useParams<{ bookId: string; episode: string }>();
   const episodeNum = parseInt(episode || '1', 10);
+  const [retryCount, setRetryCount] = useState(0);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['dramabox-stream', bookId, episodeNum],
-    queryFn: () => dramaboxApi.getStream(bookId!, episodeNum),
+  const { data, isLoading, error, refetch, isRefetching } = useQuery({
+    queryKey: ['dramabox-stream', bookId, episodeNum, retryCount],
+    queryFn: async () => {
+      // Try to refresh auth first if we've had failures
+      if (retryCount > 0) {
+        try {
+          await dramaboxApi.refreshAuth();
+        } catch (e) {
+          console.log('Auth refresh failed, continuing anyway');
+        }
+      }
+      return dramaboxApi.getStream(bookId!, episodeNum);
+    },
     enabled: !!bookId && !!episodeNum,
+    retry: 2,
+    retryDelay: 1000,
   });
 
-  if (isLoading) {
+  const handleRetry = () => {
+    setRetryCount(prev => prev + 1);
+    refetch();
+  };
+
+  if (isLoading || isRefetching) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center flex-col gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading episode...</p>
       </div>
     );
   }
@@ -25,19 +46,27 @@ const DramaBoxWatch = () => {
   if (error || !data?.data) {
     return (
       <div className="container mx-auto flex flex-col items-center justify-center gap-4 px-4 py-20">
-        <p className="text-lg text-muted-foreground">Episode not found</p>
-        <Button asChild variant="outline">
-          <Link to={`/dramabox/detail/${bookId}`}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Details
-          </Link>
-        </Button>
+        <AlertCircle className="h-12 w-12 text-destructive" />
+        <p className="text-lg text-muted-foreground">Failed to load episode</p>
+        <div className="flex gap-2">
+          <Button onClick={handleRetry} variant="default">
+            <RefreshCw className="mr-2 h-4 w-4" />
+            Retry
+          </Button>
+          <Button asChild variant="outline">
+            <Link to={`/dramabox/detail/${bookId}`}>
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Details
+            </Link>
+          </Button>
+        </div>
       </div>
     );
   }
 
   const stream = data.data;
   const videoUrl = stream.streamUrl || stream.videoUrl || stream.url;
+  const totalEps = stream.totalEpisodes;
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,67 +85,83 @@ const DramaBoxWatch = () => {
         </h1>
 
         {/* Video Player */}
-        <div className="relative mb-6 aspect-video w-full overflow-hidden rounded-lg bg-black">
-          {videoUrl ? (
-            <video
-              src={videoUrl}
-              controls
-              autoPlay
-              className="h-full w-full"
-              controlsList="nodownload"
-            >
-              Your browser does not support the video tag.
-            </video>
-          ) : (
-            <div className="flex h-full items-center justify-center">
-              <p className="text-white">Video not available</p>
-            </div>
-          )}
-        </div>
+        <Card className="mb-6 overflow-hidden">
+          <div className="relative aspect-video w-full bg-black">
+            {videoUrl ? (
+              <video
+                key={videoUrl}
+                src={videoUrl}
+                controls
+                autoPlay
+                playsInline
+                className="h-full w-full"
+                controlsList="nodownload"
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              <div className="flex h-full flex-col items-center justify-center gap-4">
+                <AlertCircle className="h-12 w-12 text-muted-foreground" />
+                <p className="text-white">Video not available</p>
+                <Button onClick={handleRetry} variant="secondary" size="sm">
+                  <RefreshCw className="mr-2 h-4 w-4" />
+                  Try Again
+                </Button>
+              </div>
+            )}
+          </div>
+        </Card>
 
         {/* Navigation */}
-        <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            disabled={episodeNum <= 1}
-            asChild={episodeNum > 1}
-          >
-            {episodeNum > 1 ? (
-              <Link to={`/dramabox/watch/${bookId}/${episodeNum - 1}`}>
-                <ChevronLeft className="mr-1 h-4 w-4" />
-                Previous
-              </Link>
-            ) : (
-              <>
-                <ChevronLeft className="mr-1 h-4 w-4" />
-                Previous
-              </>
-            )}
-          </Button>
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-center text-lg">
+              Episode {episodeNum}
+              {totalEps && ` of ${totalEps}`}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between gap-4">
+              <Button
+                variant="outline"
+                disabled={episodeNum <= 1}
+                asChild={episodeNum > 1}
+                className="flex-1"
+              >
+                {episodeNum > 1 ? (
+                  <Link to={`/dramabox/watch/${bookId}/${episodeNum - 1}`}>
+                    <ChevronLeft className="mr-1 h-4 w-4" />
+                    Previous
+                  </Link>
+                ) : (
+                  <>
+                    <ChevronLeft className="mr-1 h-4 w-4" />
+                    Previous
+                  </>
+                )}
+              </Button>
 
-          <span className="text-sm text-muted-foreground">
-            Episode {episodeNum}
-            {stream.totalEpisodes && ` / ${stream.totalEpisodes}`}
-          </span>
-
-          <Button
-            variant="outline"
-            disabled={stream.totalEpisodes ? episodeNum >= stream.totalEpisodes : false}
-            asChild={!stream.totalEpisodes || episodeNum < stream.totalEpisodes}
-          >
-            {!stream.totalEpisodes || episodeNum < stream.totalEpisodes ? (
-              <Link to={`/dramabox/watch/${bookId}/${episodeNum + 1}`}>
-                Next
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </Link>
-            ) : (
-              <>
-                Next
-                <ChevronRight className="ml-1 h-4 w-4" />
-              </>
-            )}
-          </Button>
-        </div>
+              <Button
+                variant="outline"
+                disabled={totalEps ? episodeNum >= totalEps : false}
+                asChild={!totalEps || episodeNum < totalEps}
+                className="flex-1"
+              >
+                {!totalEps || episodeNum < totalEps ? (
+                  <Link to={`/dramabox/watch/${bookId}/${episodeNum + 1}`}>
+                    Next
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </Link>
+                ) : (
+                  <>
+                    Next
+                    <ChevronRight className="ml-1 h-4 w-4" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
