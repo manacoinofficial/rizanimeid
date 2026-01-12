@@ -20,23 +20,30 @@ export interface DramaBoxEpisode {
   episodeNumber?: number;
   ep?: number;
   number?: number;
+  episode_index?: number;
+  episode_label?: string;
 }
 
 export interface DramaBoxDetailData {
   id?: string;
   bookId?: string;
-  title: string;
+  title?: string;
+  judul?: string;
   poster?: string;
   cover?: string;
   image?: string;
   description?: string;
   synopsis?: string;
+  deskripsi?: string;
   episodes?: DramaBoxEpisode[];
   episodeList?: DramaBoxEpisode[];
   episodeCount?: number;
   totalEpisodes?: number;
   total_episodes?: number;
+  total_episode?: string;
+  jumlah_episode_tersedia?: number;
   views?: string;
+  likes?: string;
   rating?: string;
   score?: string;
   genres?: string[];
@@ -97,13 +104,31 @@ export const extractDramaBoxItems = (response?: DramaBoxListResponse): DramaBoxI
 
 // Helper to get episode number from episode object
 export const getEpisodeNumber = (ep: DramaBoxEpisode): number => {
+  // Handle episode_label which is a string like "1", "2", etc.
+  if (ep.episode_label) {
+    return parseInt(ep.episode_label, 10);
+  }
+  // Handle episode_index which is 0-indexed
+  if (ep.episode_index !== undefined) {
+    return ep.episode_index + 1;
+  }
   return ep.episode ?? ep.episodeNumber ?? ep.ep ?? ep.number ?? 1;
 };
 
 // Helper to get total episodes from detail data
 export const getTotalEpisodes = (detail: DramaBoxDetailData): number => {
   const episodes = detail.episodes || detail.episodeList || [];
-  return detail.episodeCount ?? detail.totalEpisodes ?? detail.total_episodes ?? episodes.length ?? 0;
+  return detail.jumlah_episode_tersedia ?? detail.episodeCount ?? detail.totalEpisodes ?? detail.total_episodes ?? episodes.length ?? 0;
+};
+
+// Helper to get title from detail data
+export const getTitle = (detail: DramaBoxDetailData): string => {
+  return detail.title || detail.judul || 'Unknown Title';
+};
+
+// Helper to get views/likes from detail data
+export const getViews = (detail: DramaBoxDetailData): string | undefined => {
+  return detail.views || detail.likes;
 };
 
 // Helper to get genres from detail data
@@ -113,7 +138,7 @@ export const getGenres = (detail: DramaBoxDetailData): string[] => {
 
 // Helper to get description from detail data
 export const getDescription = (detail: DramaBoxDetailData): string | undefined => {
-  return detail.description || detail.synopsis;
+  return detail.description || detail.synopsis || detail.deskripsi;
 };
 
 // Helper to get rating from detail data
