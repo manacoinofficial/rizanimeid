@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Play, Star, Film, ArrowLeft, Loader2 } from 'lucide-react';
-import { dramaboxApi, getEpisodeNumber, getTotalEpisodes, getGenres, getDescription, getRating, getPoster } from '@/lib/dramaboxApi';
+import { Play, Star, Film, ArrowLeft, Loader2, Heart } from 'lucide-react';
+import { dramaboxApi, getEpisodeNumber, getTotalEpisodes, getGenres, getDescription, getRating, getPoster, getTitle, getViews } from '@/lib/dramaboxApi';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -46,6 +46,8 @@ const DramaBoxDetail = () => {
   const totalEpisodes = getTotalEpisodes(detail);
   const episodes = detail.episodes || detail.episodeList || [];
   const detailBookId = detail.bookId || detail.id || bookId;
+  const title = getTitle(detail);
+  const views = getViews(detail);
 
   return (
     <div className="min-h-screen">
@@ -63,7 +65,7 @@ const DramaBoxDetail = () => {
           <div className="mx-auto w-48 flex-shrink-0 md:mx-0">
             <img
               src={poster || '/placeholder.svg'}
-              alt={detail.title}
+              alt={title}
               className="w-full rounded-lg shadow-xl"
             />
           </div>
@@ -71,7 +73,7 @@ const DramaBoxDetail = () => {
           {/* Info */}
           <div className="flex-1 space-y-4 pt-4">
             <h1 className="text-2xl font-bold text-foreground md:text-3xl">
-              {detail.title}
+              {title}
             </h1>
 
             {/* Badges */}
@@ -80,6 +82,12 @@ const DramaBoxDetail = () => {
                 <Badge variant="secondary" className="flex items-center gap-1 bg-yellow-500/90 text-white">
                   <Star className="h-3 w-3" fill="currentColor" />
                   {rating}
+                </Badge>
+              )}
+              {views && (
+                <Badge variant="secondary" className="flex items-center gap-1 bg-pink-500/90 text-white">
+                  <Heart className="h-3 w-3" fill="currentColor" />
+                  {views}
                 </Badge>
               )}
               {totalEpisodes > 0 && (

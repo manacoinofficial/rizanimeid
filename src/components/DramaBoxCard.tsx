@@ -3,13 +3,20 @@ import { Play, Star, Film } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import type { DramaBoxItem } from '@/lib/dramaboxApi';
 
+interface ExtendedDramaBoxItem extends DramaBoxItem {
+  judul?: string;
+  total_episode?: string;
+}
+
 interface DramaBoxCardProps {
-  item: DramaBoxItem;
+  item: ExtendedDramaBoxItem;
 }
 
 const DramaBoxCard = ({ item }: DramaBoxCardProps) => {
   const bookId = item.bookId || item.id;
   const poster = item.poster || item.cover || item.image;
+  const title = item.title || item.judul || 'Unknown Title';
+  const episodeCount = item.episodes || item.total_episode;
 
   return (
     <Link
@@ -20,7 +27,7 @@ const DramaBoxCard = ({ item }: DramaBoxCardProps) => {
       <div className="relative aspect-[2/3] overflow-hidden">
         <img
           src={poster || '/placeholder.svg'}
-          alt={item.title}
+          alt={title}
           className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
           loading="lazy"
         />
@@ -43,10 +50,10 @@ const DramaBoxCard = ({ item }: DramaBoxCardProps) => {
               {item.rating}
             </Badge>
           )}
-          {item.episodes && (
+          {episodeCount && (
             <Badge variant="secondary" className="flex items-center gap-1 bg-primary/90">
               <Film className="h-3 w-3" />
-              {item.episodes} Eps
+              {episodeCount}
             </Badge>
           )}
         </div>
@@ -55,7 +62,7 @@ const DramaBoxCard = ({ item }: DramaBoxCardProps) => {
       {/* Info */}
       <div className="p-3">
         <h3 className="line-clamp-2 text-sm font-medium leading-tight text-foreground">
-          {item.title}
+          {title}
         </h3>
         {item.views && (
           <p className="mt-1 text-xs text-muted-foreground">{item.views} views</p>
