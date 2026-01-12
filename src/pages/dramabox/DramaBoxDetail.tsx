@@ -1,8 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Play, Star, Film, ArrowLeft } from 'lucide-react';
-import { dramaboxApi } from '@/lib/dramaboxApi';
-import { LoadingSkeleton } from '@/components/LoadingSkeleton';
+import { Play, Star, Film, ArrowLeft, Loader2 } from 'lucide-react';
+import { dramaboxApi, getEpisodeNumber, getTotalEpisodes, getGenres, getDescription, getRating, getPoster } from '@/lib/dramaboxApi';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +16,13 @@ const DramaBoxDetail = () => {
     enabled: !!bookId,
   });
 
-  if (isLoading) return <LoadingSkeleton />;
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (error || !data?.data) {
     return (
@@ -34,7 +39,13 @@ const DramaBoxDetail = () => {
   }
 
   const detail = data.data;
-  const poster = detail.poster || detail.cover;
+  const poster = getPoster(detail);
+  const description = getDescription(detail);
+  const rating = getRating(detail);
+  const genres = getGenres(detail);
+  const totalEpisodes = getTotalEpisodes(detail);
+  const episodes = detail.episodes || detail.episodeList || [];
+  const detailBookId = detail.bookId || detail.id || bookId;
 
   return (
     <div className="min-h-screen">
@@ -65,16 +76,16 @@ const DramaBoxDetail = () => {
 
             {/* Badges */}
             <div className="flex flex-wrap gap-2">
-              {detail.rating && (
+              {rating && (
                 <Badge variant="secondary" className="flex items-center gap-1 bg-yellow-500/90 text-white">
                   <Star className="h-3 w-3" fill="currentColor" />
-                  {detail.rating}
+                  {rating}
                 </Badge>
               )}
-              {detail.episodeCount && (
+              {totalEpisodes > 0 && (
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <Film className="h-3 w-3" />
-                  {detail.episodeCount} Episodes
+                  {totalEpisodes} Episodes
                 </Badge>
               )}
               {detail.status && (
@@ -83,9 +94,9 @@ const DramaBoxDetail = () => {
             </div>
 
             {/* Genres */}
-            {detail.genres && detail.genres.length > 0 && (
+            {genres.length > 0 && (
               <div className="flex flex-wrap gap-2">
-                {detail.genres.map((genre) => (
+                {genres.map((genre) => (
                   <Badge key={genre} variant="secondary">
                     {genre}
                   </Badge>
@@ -95,7 +106,7 @@ const DramaBoxDetail = () => {
 
             {/* Watch Button */}
             <Button asChild size="lg">
-              <Link to={`/dramabox/watch/${bookId}/1`}>
+              <Link to={`/dramabox/watch/${detailBookId}/1`}>
                 <Play className="mr-2 h-5 w-5" fill="currentColor" />
                 Watch Episode 1
               </Link>
@@ -104,66 +115,66 @@ const DramaBoxDetail = () => {
         </div>
 
         {/* Description */}
-        {detail.description && (
+        {description && (
           <Card className="mt-8">
             <CardHeader>
               <CardTitle>Synopsis</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">{detail.description}</p>
+              <p className="text-muted-foreground">{description}</p>
             </CardContent>
           </Card>
         )}
 
         {/* Episodes */}
-        {detail.episodes && detail.episodes.length > 0 && (
+        {episodes.length > 0 ? (
           <Card className="mt-6 mb-8">
             <CardHeader>
-              <CardTitle>Episodes</CardTitle>
+              <CardTitle>Episodes ({episodes.length})</CardTitle>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-80">
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                  {detail.episodes.map((ep) => (
-                    <Button
-                      key={ep.id || ep.episode}
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="justify-start"
-                    >
-                      <Link to={`/dramabox/watch/${bookId}/${ep.episode}`}>
-                        <Play className="mr-1 h-3 w-3" />
-                        Ep {ep.episode}
-                      </Link>
-                    </Button>
-                  ))}
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+                  {episodes.map((ep, index) => {
+                    const epNum = getEpisodeNumber(ep) || index + 1;
+                    return (
+                      <Button
+                        key={ep.id || epNum}
+                        variant="outline"
+                        size="sm"
+                        asChild
+                        className="justify-center"
+                      >
+                        <Link to={`/dramabox/watch/${detailBookId}/${epNum}`}>
+                          <Play className="mr-1 h-3 w-3" />
+                          {epNum}
+                        </Link>
+                      </Button>
+                    );
+                  })}
                 </div>
               </ScrollArea>
             </CardContent>
           </Card>
-        )}
-
-        {/* Generate episode buttons if episodeCount exists but episodes array doesn't */}
-        {!detail.episodes && detail.episodeCount && (
+        ) : totalEpisodes > 0 ? (
           <Card className="mt-6 mb-8">
             <CardHeader>
-              <CardTitle>Episodes</CardTitle>
+              <CardTitle>Episodes ({totalEpisodes})</CardTitle>
             </CardHeader>
             <CardContent>
               <ScrollArea className="h-80">
-                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                  {Array.from({ length: detail.episodeCount }, (_, i) => i + 1).map((ep) => (
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+                  {Array.from({ length: totalEpisodes }, (_, i) => i + 1).map((ep) => (
                     <Button
                       key={ep}
                       variant="outline"
                       size="sm"
                       asChild
-                      className="justify-start"
+                      className="justify-center"
                     >
-                      <Link to={`/dramabox/watch/${bookId}/${ep}`}>
+                      <Link to={`/dramabox/watch/${detailBookId}/${ep}`}>
                         <Play className="mr-1 h-3 w-3" />
-                        Ep {ep}
+                        {ep}
                       </Link>
                     </Button>
                   ))}
@@ -171,7 +182,8 @@ const DramaBoxDetail = () => {
               </ScrollArea>
             </CardContent>
           </Card>
-        )}
+        ) : null}
+
       </div>
     </div>
   );

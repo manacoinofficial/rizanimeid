@@ -13,18 +13,35 @@ export interface DramaBoxItem {
   rating?: string;
 }
 
+export interface DramaBoxEpisode {
+  id?: string;
+  title?: string;
+  episode?: number;
+  episodeNumber?: number;
+  ep?: number;
+  number?: number;
+}
+
 export interface DramaBoxDetailData {
-  id: string;
-  bookId: string;
+  id?: string;
+  bookId?: string;
   title: string;
   poster?: string;
   cover?: string;
+  image?: string;
   description?: string;
-  episodes?: { id: string; title: string; episode: number }[];
+  synopsis?: string;
+  episodes?: DramaBoxEpisode[];
+  episodeList?: DramaBoxEpisode[];
   episodeCount?: number;
+  totalEpisodes?: number;
+  total_episodes?: number;
   views?: string;
   rating?: string;
+  score?: string;
   genres?: string[];
+  genre?: string[];
+  tags?: string[];
   status?: string;
 }
 
@@ -76,6 +93,37 @@ export const extractDramaBoxItems = (response?: DramaBoxListResponse): DramaBoxI
   if (!response?.data) return [];
   if (Array.isArray(response.data)) return response.data;
   return response.data.list || response.data.items || [];
+};
+
+// Helper to get episode number from episode object
+export const getEpisodeNumber = (ep: DramaBoxEpisode): number => {
+  return ep.episode ?? ep.episodeNumber ?? ep.ep ?? ep.number ?? 1;
+};
+
+// Helper to get total episodes from detail data
+export const getTotalEpisodes = (detail: DramaBoxDetailData): number => {
+  const episodes = detail.episodes || detail.episodeList || [];
+  return detail.episodeCount ?? detail.totalEpisodes ?? detail.total_episodes ?? episodes.length ?? 0;
+};
+
+// Helper to get genres from detail data
+export const getGenres = (detail: DramaBoxDetailData): string[] => {
+  return detail.genres || detail.genre || detail.tags || [];
+};
+
+// Helper to get description from detail data
+export const getDescription = (detail: DramaBoxDetailData): string | undefined => {
+  return detail.description || detail.synopsis;
+};
+
+// Helper to get rating from detail data
+export const getRating = (detail: DramaBoxDetailData): string | undefined => {
+  return detail.rating || detail.score;
+};
+
+// Helper to get poster from detail data
+export const getPoster = (detail: DramaBoxDetailData): string | undefined => {
+  return detail.poster || detail.cover || detail.image;
 };
 
 export const dramaboxApi = {
