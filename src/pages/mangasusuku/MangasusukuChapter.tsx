@@ -75,7 +75,7 @@ const MangasusukuChapter = () => {
           This chapter is only available for premium users.
         </p>
         <div className="flex justify-center gap-4">
-          <Link to={`/mangasusuku/detail/${mangaSlug}`}>
+          <Link to={`/mangasusuku/detail/${slug}`}>
             <Button variant="outline">Back to Manga</Button>
           </Link>
           <Link to="/mangasusuku">
@@ -101,7 +101,7 @@ const MangasusukuChapter = () => {
                 <Home className="h-4 w-4" />
               </Button>
             </Link>
-            <Link to={`/mangasusuku/detail/${mangaSlug}`}>
+            <Link to={`/mangasusuku/detail/${slug}`}>
               <Button variant="ghost" size="icon">
                 <List className="h-4 w-4" />
               </Button>
@@ -154,7 +154,7 @@ const MangasusukuChapter = () => {
           >
             <ChevronLeft className="h-4 w-4 mr-2" /> Previous
           </Button>
-          <Link to={`/mangasusuku/detail/${mangaSlug}`}>
+          <Link to={`/mangasusuku/detail/${slug}`}>
             <Button variant="ghost">All Chapters</Button>
           </Link>
           <Button
