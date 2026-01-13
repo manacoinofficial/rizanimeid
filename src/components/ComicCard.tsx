@@ -11,6 +11,7 @@ interface ComicCardProps {
   type?: string;
   rating?: string;
   isLoading?: boolean;
+  linkPrefix?: string;
 }
 
 export const ComicCard = ({ 
@@ -21,7 +22,8 @@ export const ComicCard = ({
   date, 
   type, 
   rating, 
-  isLoading = false 
+  isLoading = false,
+  linkPrefix = '/comic'
 }: ComicCardProps) => {
   
   if (isLoading) {
@@ -39,7 +41,7 @@ export const ComicCard = ({
 
   return (
     <Link 
-      to={`/comic/detail/${slug}`} 
+      to={`${linkPrefix}/detail/${slug}`} 
       className="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:rounded-lg"
       aria-label={`Baca ${title} - ${chapter || 'komik terbaru'}`}
     >

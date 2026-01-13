@@ -61,6 +61,16 @@ import NovelLatest from "./pages/novel/NovelLatest";
 import ComicDetail from "./pages/comic/ComicDetail";
 import ComicChapter from "./pages/comic/ComicChapter";
 
+// Mangasusuku pages
+import MangasusukuHome from "./pages/mangasusuku/MangasusukuHome";
+import MangasusukuLatest from "./pages/mangasusuku/MangasusukuLatest";
+import MangasusukuPopular from "./pages/mangasusuku/MangasusukuPopular";
+import MangasusukuList from "./pages/mangasusuku/MangasusukuList";
+import MangasusukuGenres from "./pages/mangasusuku/MangasusukuGenres";
+import MangasusukuByGenre from "./pages/mangasusuku/MangasusukuByGenre";
+import MangasusukuDetail from "./pages/mangasusuku/MangasusukuDetail";
+import MangasusukuChapter from "./pages/mangasusuku/MangasusukuChapter";
+
 // Unified pages
 import UnifiedGenres from "./pages/unified/UnifiedGenres";
 import UnifiedOngoing from "./pages/unified/UnifiedOngoing";
@@ -163,6 +173,16 @@ const App = () => {
                 <Route path="/comic/bacakomik/detail/:slug" element={<ComicDetail />} />
                 <Route path="/comic/chapter/:slug" element={<ComicChapter />} />
                 <Route path="/comic/bacakomik/chapter/:slug" element={<ComicChapter />} />
+
+                {/* Mangasusuku Routes */}
+                <Route path="/mangasusuku" element={<MangasusukuHome />} />
+                <Route path="/mangasusuku/latest" element={<MangasusukuLatest />} />
+                <Route path="/mangasusuku/popular" element={<MangasusukuPopular />} />
+                <Route path="/mangasusuku/list" element={<MangasusukuList />} />
+                <Route path="/mangasusuku/genres" element={<MangasusukuGenres />} />
+                <Route path="/mangasusuku/genre/:genreId" element={<MangasusukuByGenre />} />
+                <Route path="/mangasusuku/detail/:slug" element={<MangasusukuDetail />} />
+                <Route path="/mangasusuku/chapter/:slug" element={<MangasusukuChapter />} />
 
                 {/* News Routes */}
                 <Route path="/news" element={<NewsHome />} />
