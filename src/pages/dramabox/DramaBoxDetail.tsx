@@ -19,13 +19,13 @@ import {
 const EPISODES_PER_PAGE = 24;
 
 const DramaBoxDetail = () => {
-  const { bookId } = useParams<{ bookId: string }>();
+  const { bookld } = useParams<{ bookld: string }>();
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['dramabox-detail', bookId],
-    queryFn: () => dramaboxApi.getDetail(bookId!),
-    enabled: !!bookId,
+    queryKey: ['dramabox-detail', bookld],
+    queryFn: () => dramaboxApi.getDetail(bookld!),
+    enabled: !!bookld,
   });
 
   if (isLoading) {
