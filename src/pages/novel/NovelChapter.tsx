@@ -87,7 +87,7 @@ const NovelChapter = () => {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Link to={`/novel/detail/${effectiveNovelSlug || slug}`}>
+              <Link to={`/novel/meionovel/detail/${effectiveNovelSlug || slug}`}>
                 <Button variant="ghost" size="sm">
                   <List className="h-4 w-4 mr-1" />
                   <span className="hidden sm:inline">Chapters</span>
@@ -115,7 +115,7 @@ const NovelChapter = () => {
               {data.navigation?.prev && (
                 <Link to={isSlugOnlyRoute 
                   ? `/novel/meionovel/chapter/${data.navigation.prev}` 
-                  : `/novel/chapter/${effectiveNovelSlug}/${data.navigation.prev}`
+                  : `/novel/meionovel/chapter/${effectiveNovelSlug}/${data.navigation.prev}`
                 }>
                   <Button variant="outline" size="sm">
                     <ChevronLeft className="h-4 w-4" />
@@ -125,7 +125,7 @@ const NovelChapter = () => {
               {data.navigation?.next && (
                 <Link to={isSlugOnlyRoute 
                   ? `/novel/meionovel/chapter/${data.navigation.next}` 
-                  : `/novel/chapter/${effectiveNovelSlug}/${data.navigation.next}`
+                  : `/novel/meionovel/chapter/${effectiveNovelSlug}/${data.navigation.next}`
                 }>
                   <Button variant="outline" size="sm">
                     <ChevronRight className="h-4 w-4" />
@@ -198,7 +198,7 @@ const NovelChapter = () => {
           {data.navigation?.prev ? (
             <Link to={isSlugOnlyRoute 
               ? `/novel/meionovel/chapter/${data.navigation.prev}` 
-              : `/novel/chapter/${effectiveNovelSlug}/${data.navigation.prev}`
+              : `/novel/meionovel/chapter/${effectiveNovelSlug}/${data.navigation.prev}`
             }>
               <Button variant="default">
                 <ChevronLeft className="h-4 w-4 mr-1" />
@@ -209,7 +209,7 @@ const NovelChapter = () => {
             <div />
           )}
 
-          <Link to={`/novel/detail/${effectiveNovelSlug || slug}`}>
+          <Link to={`/novel/meionovel/detail/${effectiveNovelSlug || slug}`}>
             <Button variant="outline">
               <List className="h-4 w-4 mr-2" />
               All Chapters
@@ -219,7 +219,7 @@ const NovelChapter = () => {
           {data.navigation?.next ? (
             <Link to={isSlugOnlyRoute 
               ? `/novel/meionovel/chapter/${data.navigation.next}` 
-              : `/novel/chapter/${effectiveNovelSlug}/${data.navigation.next}`
+              : `/novel/meionovel/chapter/${effectiveNovelSlug}/${data.navigation.next}`
             }>
               <Button variant="default">
                 Next
