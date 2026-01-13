@@ -31,6 +31,7 @@ export const Navbar = () => {
     { to: '/', label: 'Donghua' },
     { to: '/anime', label: 'Anime' },
     { to: '/comic', label: 'Comic' },
+    { to: '/mangasusuku', label: 'Mangasusuku' },
     { to: '/novel', label: 'Novel' },
     { to: '/news', label: 'berita' },
     { to: '/dramabox', label: 'dramachina' },

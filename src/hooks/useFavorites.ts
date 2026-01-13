@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export type ContentType = 'comic' | 'novel' | 'anime';
+export type ContentType = 'comic' | 'novel' | 'anime' | 'mangasusuku' | 'dramabox';
 
 export interface FavoriteItem {
   type: ContentType;
