@@ -1,14 +1,26 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Play, Star, Film, ArrowLeft, Loader2, Heart } from 'lucide-react';
+import { Play, Star, Film, ArrowLeft, Loader2, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
 import { dramaboxApi, getEpisodeNumber, getTotalEpisodes, getGenres, getDescription, getRating, getPoster, getTitle, getViews } from '@/lib/dramaboxApi';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from '@/components/ui/pagination';
+
+const EPISODES_PER_PAGE = 24;
 
 const DramaBoxDetail = () => {
   const { bookId } = useParams<{ bookId: string }>();
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['dramabox-detail', bookId],
@@ -43,11 +55,45 @@ const DramaBoxDetail = () => {
   const description = getDescription(detail);
   const rating = getRating(detail);
   const genres = getGenres(detail);
-  const totalEpisodes = getTotalEpisodes(detail);
+  const totalEpisodesCount = getTotalEpisodes(detail);
   const episodes = detail.episodes || detail.episodeList || [];
   const detailBookId = detail.bookId || detail.id || bookId;
   const title = getTitle(detail);
   const views = getViews(detail);
+
+  // Build episode list - use actual episodes or generate from count
+  const episodeList = episodes.length > 0 
+    ? episodes.map((ep, index) => getEpisodeNumber(ep) || index + 1)
+    : Array.from({ length: totalEpisodesCount }, (_, i) => i + 1);
+
+  // Pagination logic
+  const totalPages = Math.ceil(episodeList.length / EPISODES_PER_PAGE);
+  const startIndex = (currentPage - 1) * EPISODES_PER_PAGE;
+  const endIndex = startIndex + EPISODES_PER_PAGE;
+  const paginatedEpisodes = episodeList.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to episodes section
+    document.getElementById('episodes-section')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const pages: (number | 'ellipsis')[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      if (currentPage <= 3) {
+        pages.push(1, 2, 3, 4, 'ellipsis', totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pages.push(1, 'ellipsis', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+      } else {
+        pages.push(1, 'ellipsis', currentPage - 1, currentPage, currentPage + 1, 'ellipsis', totalPages);
+      }
+    }
+    return pages;
+  };
 
   return (
     <div className="min-h-screen">
@@ -63,11 +109,13 @@ const DramaBoxDetail = () => {
         <div className="relative -mt-32 flex flex-col gap-6 md:flex-row">
           {/* Poster */}
           <div className="mx-auto w-48 flex-shrink-0 md:mx-0">
-            <img
-              src={poster || '/placeholder.svg'}
-              alt={title}
-              className="w-full rounded-lg shadow-xl"
-            />
+            <div className="aspect-[2/3] overflow-hidden rounded-lg shadow-xl">
+              <img
+                src={poster || '/placeholder.svg'}
+                alt={title}
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
 
           {/* Info */}
@@ -90,10 +138,10 @@ const DramaBoxDetail = () => {
                   {views}
                 </Badge>
               )}
-              {totalEpisodes > 0 && (
+              {episodeList.length > 0 && (
                 <Badge variant="secondary" className="flex items-center gap-1">
                   <Film className="h-3 w-3" />
-                  {totalEpisodes} Episodes
+                  {episodeList.length} Episodes
                 </Badge>
               )}
               {detail.status && (
@@ -134,64 +182,95 @@ const DramaBoxDetail = () => {
           </Card>
         )}
 
-        {/* Episodes */}
-        {episodes.length > 0 ? (
-          <Card className="mt-6 mb-8">
-            <CardHeader>
-              <CardTitle>Episodes ({episodes.length})</CardTitle>
+        {/* Episodes with Pagination */}
+        {episodeList.length > 0 && (
+          <Card className="mt-6 mb-8" id="episodes-section">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle>Episodes ({episodeList.length})</CardTitle>
+              {totalPages > 1 && (
+                <span className="text-sm text-muted-foreground">
+                  Page {currentPage} of {totalPages}
+                </span>
+              )}
             </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-80">
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
-                  {episodes.map((ep, index) => {
-                    const epNum = getEpisodeNumber(ep) || index + 1;
-                    return (
-                      <Button
-                        key={ep.id || epNum}
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="justify-center"
-                      >
-                        <Link to={`/dramabox/watch/${detailBookId}/${epNum}`}>
-                          <Play className="mr-1 h-3 w-3" />
-                          {epNum}
-                        </Link>
-                      </Button>
-                    );
-                  })}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        ) : totalEpisodes > 0 ? (
-          <Card className="mt-6 mb-8">
-            <CardHeader>
-              <CardTitle>Episodes ({totalEpisodes})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ScrollArea className="h-80">
-                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
-                  {Array.from({ length: totalEpisodes }, (_, i) => i + 1).map((ep) => (
-                    <Button
-                      key={ep}
-                      variant="outline"
-                      size="sm"
-                      asChild
-                      className="justify-center"
-                    >
-                      <Link to={`/dramabox/watch/${detailBookId}/${ep}`}>
-                        <Play className="mr-1 h-3 w-3" />
-                        {ep}
-                      </Link>
-                    </Button>
-                  ))}
-                </div>
-              </ScrollArea>
-            </CardContent>
-          </Card>
-        ) : null}
+            <CardContent className="space-y-6">
+              {/* Episode Grid */}
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10">
+                {paginatedEpisodes.map((epNum) => (
+                  <Link
+                    key={epNum}
+                    to={`/dramabox/watch/${detailBookId}/${epNum}`}
+                    className="group relative aspect-video overflow-hidden rounded-lg bg-muted transition-all hover:ring-2 hover:ring-primary"
+                  >
+                    {/* Episode Thumbnail */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 to-primary/5">
+                      <span className="text-lg font-bold text-foreground">{epNum}</span>
+                    </div>
+                    
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
+                      <Play className="h-6 w-6 text-white" fill="currentColor" />
+                    </div>
+                    
+                    {/* Episode Label */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                      <p className="text-center text-xs font-medium text-white">Ep {epNum}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
 
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (currentPage > 1) handlePageChange(currentPage - 1);
+                        }}
+                        className={currentPage <= 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      />
+                    </PaginationItem>
+
+                    {getPageNumbers().map((page, index) => (
+                      <PaginationItem key={`${page}-${index}`}>
+                        {page === 'ellipsis' ? (
+                          <PaginationEllipsis />
+                        ) : (
+                          <PaginationLink
+                            href="#"
+                            isActive={currentPage === page}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handlePageChange(page);
+                            }}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        )}
+                      </PaginationItem>
+                    ))}
+
+                    <PaginationItem>
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (currentPage < totalPages) handlePageChange(currentPage + 1);
+                        }}
+                        className={currentPage >= totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              )}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
