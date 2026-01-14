@@ -6,12 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Heart, BookOpen, Star, User, Palette } from 'lucide-react';
+import { Heart, BookOpen, Star, User, Palette, History } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
+import { useReadingHistory } from '@/hooks/useReadingHistory';
 
 const MangasusukuDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { getLastRead } = useReadingHistory();
 
   const { data, isLoading } = useQuery({
     queryKey: ['mangasusuku-detail', slug],
@@ -115,7 +117,7 @@ const MangasusukuDetail = () => {
             )}
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-3">
               <Button
                 variant={isFavorite('mangasusuku', slug!) ? 'default' : 'outline'}
                 onClick={handleFavoriteClick}
@@ -124,13 +126,28 @@ const MangasusukuDetail = () => {
                 <Heart className={`h-4 w-4 ${isFavorite('mangasusuku', slug!) ? 'fill-current' : ''}`} />
                 {isFavorite('mangasusuku', slug!) ? 'Favorited' : 'Add to Favorites'}
               </Button>
-              {detail.chapters && detail.chapters.length > 0 && (
-                <Link to={`/mangasusuku/chapter/${detail.chapters[0].slug}`}>
-                  <Button className="gap-2">
-                    <BookOpen className="h-4 w-4" /> Start Reading
-                  </Button>
-                </Link>
-              )}
+              {(() => {
+                const lastRead = getLastRead('mangasusuku', slug!);
+                if (lastRead?.lastChapterSlug) {
+                  return (
+                    <Link to={`/mangasusuku/chapter/${lastRead.lastChapterSlug}`}>
+                      <Button className="gap-2">
+                        <History className="h-4 w-4" /> Resume {lastRead.lastChapter}
+                      </Button>
+                    </Link>
+                  );
+                }
+                if (detail.chapters && detail.chapters.length > 0) {
+                  return (
+                    <Link to={`/mangasusuku/chapter/${detail.chapters[0].slug}`}>
+                      <Button className="gap-2">
+                        <BookOpen className="h-4 w-4" /> Start Reading
+                      </Button>
+                    </Link>
+                  );
+                }
+                return null;
+              })()}
             </div>
           </div>
         </div>

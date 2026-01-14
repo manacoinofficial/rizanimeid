@@ -1,15 +1,25 @@
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, ArrowLeft, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
-import { dramaboxApi } from '@/lib/dramaboxApi';
+import { dramaboxApi, getTitle, getPoster } from '@/lib/dramaboxApi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useState } from 'react';
+
+import { useReadingHistory } from '@/hooks/useReadingHistory';
 
 const DramaBoxWatch = () => {
   const { bookId, episode } = useParams<{ bookId: string; episode: string }>();
   const episodeNum = parseInt(episode || '1', 10);
   const [retryCount, setRetryCount] = useState(0);
+  const { addToHistory } = useReadingHistory();
+
+  // Fetch detail to get title and cover for history
+  const { data: detailData } = useQuery({
+    queryKey: ['dramabox-detail', bookId],
+    queryFn: () => dramaboxApi.getDetail(bookId!),
+    enabled: !!bookId,
+  });
 
   const { data, isLoading, error, refetch, isRefetching } = useQuery({
     queryKey: ['dramabox-stream', bookId, episodeNum, retryCount],
@@ -28,6 +38,21 @@ const DramaBoxWatch = () => {
     retry: 2,
     retryDelay: 1000,
   });
+
+  // Add to watch history when episode loads
+  useEffect(() => {
+    if (data?.data && detailData?.data && bookId) {
+      const detail = detailData.data;
+      addToHistory({
+        type: 'dramabox',
+        slug: bookId,
+        title: getTitle(detail),
+        cover: getPoster(detail) || '/placeholder.svg',
+        lastEpisode: String(episodeNum),
+        lastEpisodeId: String(episodeNum),
+      });
+    }
+  }, [data, detailData, bookId, episodeNum, addToHistory]);
 
   const handleRetry = () => {
     setRetryCount(prev => prev + 1);

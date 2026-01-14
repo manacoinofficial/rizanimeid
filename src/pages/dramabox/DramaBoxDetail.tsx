@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Play, Star, Film, ArrowLeft, Loader2, Heart, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Play, Star, Film, ArrowLeft, Loader2, Heart, ChevronLeft, ChevronRight, History } from 'lucide-react';
 import { dramaboxApi, getEpisodeNumber, getTotalEpisodes, getGenres, getDescription, getRating, getPoster, getTitle, getViews } from '@/lib/dramaboxApi';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -15,18 +15,24 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from '@/components/ui/pagination';
+import { useReadingHistory } from '@/hooks/useReadingHistory';
 
 const EPISODES_PER_PAGE = 24;
 
 const DramaBoxDetail = () => {
-  const { bookld } = useParams<{ bookld: string }>();
+  const { bookId } = useParams<{ bookId: string }>();
   const [currentPage, setCurrentPage] = useState(1);
+  const { getLastRead } = useReadingHistory();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['dramabox-detail', bookld],
-    queryFn: () => dramaboxApi.getDetail(bookld!),
-    enabled: !!bookld,
+    queryKey: ['dramabox-detail', bookId],
+    queryFn: () => dramaboxApi.getDetail(bookId!),
+    enabled: !!bookId,
   });
+
+  // Get last watched episode
+  const lastRead = getLastRead('dramabox', bookId || '');
+  const lastWatchedEpisode = lastRead?.lastEpisode ? parseInt(lastRead.lastEpisode) : null;
 
   if (isLoading) {
     return (
@@ -161,12 +167,23 @@ const DramaBoxDetail = () => {
             )}
 
             {/* Watch Button */}
-            <Button asChild size="lg">
-              <Link to={`/dramabox/watch/${detailBookId}/1`}>
-                <Play className="mr-2 h-5 w-5" fill="currentColor" />
-                Watch Episode 1
-              </Link>
-            </Button>
+            <div className="flex flex-wrap gap-3">
+              {lastWatchedEpisode ? (
+                <Button asChild size="lg">
+                  <Link to={`/dramabox/watch/${detailBookId}/${lastWatchedEpisode}`}>
+                    <History className="mr-2 h-5 w-5" />
+                    Resume Episode {lastWatchedEpisode}
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild size="lg">
+                  <Link to={`/dramabox/watch/${detailBookId}/1`}>
+                    <Play className="mr-2 h-5 w-5" fill="currentColor" />
+                    Watch Episode 1
+                  </Link>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
