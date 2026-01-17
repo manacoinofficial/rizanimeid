@@ -171,12 +171,12 @@ export const animeApi = {
   },
 
   getOngoing: async (page: number = 1): Promise<AnimeListResponse> => {
-    const response = await fetch(`${BASE_URL}/anime/ongoing-anime?page=${page}`);
+    const response = await fetch(`${BASE_URL}/anime/animasu/ongoing?page=${page}`);
     return response.json();
   },
 
   getCompleted: async (page: number = 1): Promise<AnimeListResponse> => {
-    const response = await fetch(`${BASE_URL}/anime/complete-anime?page=${page}`);
+    const response = await fetch(`${BASE_URL}/anime/animasu/completed?page=${page}`);
     return response.json();
   },
 
