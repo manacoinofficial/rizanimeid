@@ -90,6 +90,36 @@ export const extractMangasusukuGenres = (response?: MangasusukuGenreResponse): M
   return response.data || response.genres || [];
 };
 
+// Helper to get title
+export const getTitle = (item?: MangasusukuItem | MangasusukuDetail): string => {
+  if (!item) return 'Unknown Title';
+  return item.title || 'Unknown Title';
+};
+
+// Helper to get cover
+export const getCover = (item?: MangasusukuItem | MangasusukuDetail): string => {
+  if (!item) return '/placeholder.svg';
+  return item.cover || '/placeholder.svg';
+};
+
+// Helper to get chapters
+export const getChapters = (detail?: MangasusukuDetail): MangasusukuChapter[] => {
+  if (!detail) return [];
+  return detail.chapters || [];
+};
+
+// Helper to get synopsis
+export const getSynopsis = (detail?: MangasusukuDetail): string => {
+  if (!detail) return 'No synopsis available.';
+  return detail.synopsis || detail.description || 'No synopsis available.';
+};
+
+// Helper to get chapter images
+export const getChapterImages = (chapter?: MangasusukuChapterData): string[] => {
+  if (!chapter) return [];
+  return chapter.images || [];
+};
+
 export const mangasusukuApi = {
   // Home page - featured/recommended
   getHome: async (page: number = 1): Promise<MangasusukuListResponse> => {
