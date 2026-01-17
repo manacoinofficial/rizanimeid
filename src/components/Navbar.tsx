@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, X, Library, Tags, Clock, CheckCircle, User, LogIn, LogOut, Trophy, Tv } from 'lucide-react';
+import { Search, Menu, X, Library, Tags, Clock, CheckCircle, User, LogIn, LogOut, Trophy, Tv, Play, BookOpen, Newspaper, Clapperboard, Download, BookMarked } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
@@ -28,15 +28,15 @@ export const Navbar = () => {
   };
 
   const navLinks = [
-    { to: '/', label: 'Donghua' },
-    { to: '/anime', label: 'Anime' },
-    { to: '/comic', label: 'Comic' },
-    { to: '/mangasusuku', label: 'Mangasusuku' },
-    { to: '/novel', label: 'Novel' },
-    { to: '/news', label: 'berita' },
-    { to: '/dramabox', label: 'dramachina' },
-    { to: '/install', label: 'aplikasi' },
-    { to: '/tvshow', label: 'TV Show' },
+    { to: '/', label: 'Donghua', icon: Play },
+    { to: '/anime', label: 'Anime', icon: Tv },
+    { to: '/comic', label: 'Comic', icon: BookOpen },
+    { to: '/mangasusuku', label: 'Mangasusuku', icon: BookMarked },
+    { to: '/novel', label: 'Novel', icon: BookOpen },
+    { to: '/news', label: 'Berita', icon: Newspaper },
+    { to: '/dramabox', label: 'DramaChina', icon: Clapperboard },
+    { to: '/install', label: 'Aplikasi', icon: Download },
+    { to: '/tvshow', label: 'TV Show', icon: Tv },
   ];
 
   const browseLinks = [
@@ -66,9 +66,10 @@ export const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors"
+                className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors flex items-center gap-1.5"
               >
-                {link.label}
+                <link.icon className="h-4 w-4" />
+                <span className="hidden xl:inline">{link.label}</span>
               </Link>
             ))}
             <div className="w-px h-6 bg-border mx-2" />
