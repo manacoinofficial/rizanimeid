@@ -3,7 +3,8 @@ const BASE_URL = 'https://www.sankavollerei.com';
 export interface MangasusukuItem {
   title: string;
   slug: string;
-  cover: string;
+  cover?: string;
+  image?: string;
   chapter?: string;
   date?: string;
   type?: string;
@@ -25,9 +26,10 @@ export interface MangasusukuChapter {
 }
 
 export interface MangasusukuDetail {
-  title: string;
+  title?: string;
   alternativeTitle?: string;
-  cover: string;
+  cover?: string;
+  image?: string;
   synopsis?: string;
   description?: string;
   status?: string;
@@ -41,11 +43,22 @@ export interface MangasusukuDetail {
 }
 
 export interface MangasusukuChapterData {
-  title: string;
-  images: string[];
+  title?: string;
+  images?: string[];
   navigation?: {
     prev?: { slug: string };
     next?: { slug: string };
+  };
+}
+
+export interface MangasusukuHomeResponse {
+  success?: boolean;
+  hotComics?: MangasusukuItem[];
+  latestUpdates?: MangasusukuItem[];
+  pagination?: {
+    currentPage: number;
+    hasNextPage: boolean;
+    nextPage?: number;
   };
 }
 
@@ -96,10 +109,10 @@ export const getTitle = (item?: MangasusukuItem | MangasusukuDetail): string => 
   return item.title || 'Unknown Title';
 };
 
-// Helper to get cover
+// Helper to get cover/image
 export const getCover = (item?: MangasusukuItem | MangasusukuDetail): string => {
   if (!item) return '/placeholder.svg';
-  return item.cover || '/placeholder.svg';
+  return item.cover || item.image || '/placeholder.svg';
 };
 
 // Helper to get chapters

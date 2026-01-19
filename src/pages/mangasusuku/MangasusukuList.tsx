@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { mangasusukuApi, extractMangasusukuItems } from '@/lib/mangasusukuApi';
+import { mangasusukuApi, extractMangasusukuItems, getCover } from '@/lib/mangasusukuApi';
 import { ComicCard } from '@/components/ComicCard';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { Button } from '@/components/ui/button';
@@ -65,7 +65,7 @@ const MangasusukuList = () => {
                 key={manga.slug}
                 title={manga.title}
                 slug={manga.slug}
-                cover={manga.cover}
+                cover={getCover(manga)}
                 chapter={manga.chapter}
                 type={manga.type}
                 rating={manga.rating}

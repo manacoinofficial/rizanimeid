@@ -4,9 +4,17 @@ import { Link } from 'react-router-dom';
 import { animeApi } from '@/lib/animeApi';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Clapperboard, Star, Play, Search } from 'lucide-react';
+import { Clapperboard, Play, Search, Tv } from 'lucide-react';
+
+interface DramaItem {
+  title: string;
+  slug: string;
+  poster: string | null;
+  type: string | null;
+  episode: string | null;
+  status: string | null;
+}
 
 const JDrama = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -16,11 +24,12 @@ const JDrama = () => {
     queryFn: () => animeApi.getJDrama(),
   });
 
-  const dramaList = data?.data?.animeList || [];
+  // Extract anime_list from response (not data.animeList)
+  const dramaList: DramaItem[] = (data as any)?.anime_list || [];
 
   const filteredList = useMemo(() => {
     if (!searchQuery.trim()) return dramaList;
-    return dramaList.filter((drama: any) =>
+    return dramaList.filter((drama) =>
       drama.title.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [dramaList, searchQuery]);
@@ -56,25 +65,25 @@ const JDrama = () => {
           </p>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {filteredList.map((drama: any, index: number) => (
-              <Link key={index} to={`/anime/drama/${drama.animeId}`} className="group block">
+            {filteredList.map((drama, index) => (
+              <Link key={index} to={`/anime/drama/${drama.slug}`} className="group block">
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="relative aspect-[2/3] overflow-hidden">
-                    <img
-                      src={drama.poster}
-                      alt={drama.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      loading="lazy"
-                    />
+                  <div className="relative aspect-[2/3] overflow-hidden bg-muted">
+                    {drama.poster ? (
+                      <img
+                        src={drama.poster}
+                        alt={drama.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Tv className="h-12 w-12 text-muted-foreground" />
+                      </div>
+                    )}
                     <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <Play className="w-12 h-12 text-white" />
                     </div>
-                    {drama.score && (
-                      <Badge className="absolute top-2 right-2 bg-yellow-500 text-black">
-                        <Star className="w-3 h-3 mr-1" />
-                        {drama.score}
-                      </Badge>
-                    )}
                   </div>
                   <div className="p-3">
                     <h3 className="font-semibold text-sm line-clamp-2 group-hover:text-primary transition-colors">
