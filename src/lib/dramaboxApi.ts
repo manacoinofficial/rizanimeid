@@ -98,8 +98,18 @@ export interface DramaBoxAuthResponse {
 // Helper to extract items from response
 export const extractDramaBoxItems = (response?: DramaBoxListResponse): DramaBoxItem[] => {
   if (!response?.data) return [];
-  if (Array.isArray(response.data)) return response.data;
-  return response.data.list || response.data.items || [];
+  const items = Array.isArray(response.data) ? response.data : (response.data.list || response.data.items || []);
+  
+  // Extract bookId from cover URL if null (format: .../42000003894/42000003894.jpg)
+  return items.map(item => {
+    if (!item.bookId && item.cover) {
+      const match = item.cover.match(/\/(\d{11})\/\d{11}\./);
+      if (match) {
+        return { ...item, bookId: match[1] };
+      }
+    }
+    return item;
+  });
 };
 
 // Helper to get episode number from episode object

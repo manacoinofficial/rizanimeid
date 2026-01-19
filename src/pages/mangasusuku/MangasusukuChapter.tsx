@@ -15,15 +15,22 @@ const MangasusukuChapter = () => {
   const { onReadChapter } = useLevel();
   const [showNav, setShowNav] = useState(true);
 
-  const { data, isLoading, error } = useQuery({
+  const { data: response, isLoading, error } = useQuery({
     queryKey: ['mangasusuku-chapter', slug],
     queryFn: () => mangasusukuApi.getChapter(slug!),
     enabled: !!slug,
   });
 
-  const chapter = data?.data;
-  const images = getChapterImages(chapter);
-  const mangaSlug = slug?.replace(/-chapter-\d+.*$/, '') || slug?.replace(/-\d+$/, '') || slug;
+  // API returns data at top level (title, images, navigation)
+  const chapter = response?.title ? response : response?.data;
+  const images = (chapter as any)?.images || [];
+  const mangaSlug = slug?.replace(/-chapter-\d+.*$/, '').replace(/-season-\d+-chapter-\d+.*$/, '') || slug?.replace(/-\d+$/, '') || slug;
+  
+  // Navigation - API returns strings like "#/prev/" or actual slugs
+  const navPrev = (chapter as any)?.navigation?.prev;
+  const navNext = (chapter as any)?.navigation?.next;
+  const prevSlug = navPrev && typeof navPrev === 'string' && !navPrev.includes('#') ? navPrev.replace(/\/$/, '') : null;
+  const nextSlug = navNext && typeof navNext === 'string' && !navNext.includes('#') ? navNext.replace(/\/$/, '') : null;
 
   useEffect(() => {
     if (chapter && slug && mangaSlug) {
@@ -52,15 +59,15 @@ const MangasusukuChapter = () => {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' && chapter?.navigation?.prev?.slug) {
-        navigate(`/mangasusuku/chapter/${chapter.navigation.prev.slug}`);
-      } else if (e.key === 'ArrowRight' && chapter?.navigation?.next?.slug) {
-        navigate(`/mangasusuku/chapter/${chapter.navigation.next.slug}`);
+      if (e.key === 'ArrowLeft' && prevSlug) {
+        navigate(`/mangasusuku/chapter/${prevSlug}`);
+      } else if (e.key === 'ArrowRight' && nextSlug) {
+        navigate(`/mangasusuku/chapter/${nextSlug}`);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [chapter, navigate]);
+  }, [prevSlug, nextSlug, navigate]);
 
   if (isLoading) return <LoadingSkeleton />;
 
@@ -88,8 +95,8 @@ const MangasusukuChapter = () => {
           </div>
           <h1 className="text-sm font-medium truncate max-w-[200px] md:max-w-md">{chapter.title}</h1>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" disabled={!chapter.navigation?.prev?.slug} onClick={() => chapter.navigation?.prev?.slug && navigate(`/mangasusuku/chapter/${chapter.navigation.prev.slug}`)}><ChevronLeft className="h-4 w-4" /></Button>
-            <Button variant="ghost" size="icon" disabled={!chapter.navigation?.next?.slug} onClick={() => chapter.navigation?.next?.slug && navigate(`/mangasusuku/chapter/${chapter.navigation.next.slug}`)}><ChevronRight className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" disabled={!prevSlug} onClick={() => prevSlug && navigate(`/mangasusuku/chapter/${prevSlug}`)}><ChevronLeft className="h-4 w-4" /></Button>
+            <Button variant="ghost" size="icon" disabled={!nextSlug} onClick={() => nextSlug && navigate(`/mangasusuku/chapter/${nextSlug}`)}><ChevronRight className="h-4 w-4" /></Button>
           </div>
         </div>
       </div>
@@ -102,9 +109,9 @@ const MangasusukuChapter = () => {
 
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur border-t">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Button variant="outline" disabled={!chapter.navigation?.prev?.slug} onClick={() => chapter.navigation?.prev?.slug && navigate(`/mangasusuku/chapter/${chapter.navigation.prev.slug}`)}><ChevronLeft className="h-4 w-4 mr-2" /> Previous</Button>
+          <Button variant="outline" disabled={!prevSlug} onClick={() => prevSlug && navigate(`/mangasusuku/chapter/${prevSlug}`)}><ChevronLeft className="h-4 w-4 mr-2" /> Previous</Button>
           <Link to={`/mangasusuku/detail/${mangaSlug}`}><Button variant="ghost">All Chapters</Button></Link>
-          <Button variant="outline" disabled={!chapter.navigation?.next?.slug} onClick={() => chapter.navigation?.next?.slug && navigate(`/mangasusuku/chapter/${chapter.navigation.next.slug}`)}>Next <ChevronRight className="h-4 w-4 ml-2" /></Button>
+          <Button variant="outline" disabled={!nextSlug} onClick={() => nextSlug && navigate(`/mangasusuku/chapter/${nextSlug}`)}>Next <ChevronRight className="h-4 w-4 ml-2" /></Button>
         </div>
       </div>
     </div>

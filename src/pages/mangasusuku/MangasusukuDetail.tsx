@@ -15,16 +15,18 @@ const MangasusukuDetail = () => {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { getLastRead } = useReadingHistory();
 
-  const { data, isLoading } = useQuery({
+  const { data: response, isLoading } = useQuery({
     queryKey: ['mangasusuku-detail', slug],
     queryFn: () => mangasusukuApi.getDetail(slug!),
     enabled: !!slug,
   });
 
-  const detail = data?.data;
-  const cover = getCover(detail);
-  const synopsis = getSynopsis(detail);
-  const chapters = getChapters(detail);
+  // API returns data at top level (title, image, synopsis, chapters)
+  const rawDetail = response?.title ? response : response?.data;
+  const detail = rawDetail as any;
+  const cover = detail?.image || detail?.cover || '/placeholder.svg';
+  const synopsis = detail?.synopsis || detail?.description || '';
+  const chapters = detail?.chapters || [];
 
   const handleFavoriteClick = () => {
     if (detail) {

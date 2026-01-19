@@ -75,6 +75,7 @@ import MangasusukuChapter from "./pages/mangasusuku/MangasusukuChapter";
 import UnifiedGenres from "./pages/unified/UnifiedGenres";
 import UnifiedOngoing from "./pages/unified/UnifiedOngoing";
 import UnifiedCompleted from "./pages/unified/UnifiedCompleted";
+import UnifiedSearch from "./pages/UnifiedSearch";
 
 // TV Show pages
 import TvShowHome from "./pages/tvshow/TvShowHome";
@@ -138,7 +139,8 @@ const App = () => {
                 <Route path="/" element={<Home />} />
                 <Route path="/ongoing" element={<Ongoing />} />
                 <Route path="/completed" element={<Completed />} />
-                <Route path="/search/:keyword" element={<Search />} />
+                <Route path="/search/:keyword" element={<UnifiedSearch />} />
+                <Route path="/search" element={<UnifiedSearch />} />
                 <Route path="/genres" element={<Genres />} />
                 <Route path="/genre/:slug" element={<GenreDetail />} />
                 <Route path="/by-year" element={<ByYear />} />
