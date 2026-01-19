@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { mangasusukuApi } from '@/lib/mangasusukuApi';
+import { mangasusukuApi, getCover, getSynopsis, getChapters } from '@/lib/mangasusukuApi';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -22,13 +22,16 @@ const MangasusukuDetail = () => {
   });
 
   const detail = data?.data;
+  const cover = getCover(detail);
+  const synopsis = getSynopsis(detail);
+  const chapters = getChapters(detail);
 
   const handleFavoriteClick = () => {
     if (detail) {
       toggleFavorite({
         slug: slug!,
-        title: detail.title,
-        cover: detail.cover,
+        title: detail.title || 'Unknown',
+        cover: cover,
         type: 'mangasusuku',
       });
     }
@@ -52,7 +55,7 @@ const MangasusukuDetail = () => {
       <div className="relative h-64 md:h-80 overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${detail.cover})` }}
+          style={{ backgroundImage: `url(${cover})` }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
       </div>
@@ -62,15 +65,16 @@ const MangasusukuDetail = () => {
           {/* Cover */}
           <div className="shrink-0">
             <img
-              src={detail.cover}
-              alt={detail.title}
+              src={cover}
+              alt={detail.title || 'Manga Cover'}
               className="w-48 h-72 object-cover rounded-lg shadow-xl mx-auto md:mx-0"
+              onError={(e) => { e.currentTarget.src = '/placeholder.svg'; }}
             />
           </div>
 
           {/* Info */}
           <div className="flex-1 space-y-4">
-            <h1 className="text-2xl md:text-3xl font-bold">{detail.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold">{detail.title || 'Unknown Title'}</h1>
             {detail.alternativeTitle && (
               <p className="text-muted-foreground">{detail.alternativeTitle}</p>
             )}
@@ -137,9 +141,9 @@ const MangasusukuDetail = () => {
                     </Link>
                   );
                 }
-                if (detail.chapters && detail.chapters.length > 0) {
+                if (chapters.length > 0) {
                   return (
-                    <Link to={`/mangasusuku/chapter/${detail.chapters[0].slug}`}>
+                    <Link to={`/mangasusuku/chapter/${chapters[0].slug}`}>
                       <Button className="gap-2">
                         <BookOpen className="h-4 w-4" /> Start Reading
                       </Button>
@@ -153,27 +157,27 @@ const MangasusukuDetail = () => {
         </div>
 
         {/* Synopsis */}
-        {(detail.synopsis || detail.description) && (
+        {synopsis && synopsis !== 'No synopsis available.' && (
           <Card className="mt-8">
             <CardContent className="pt-6">
               <h2 className="text-lg font-semibold mb-3">Synopsis</h2>
               <p className="text-muted-foreground leading-relaxed">
-                {detail.synopsis || detail.description}
+                {synopsis}
               </p>
             </CardContent>
           </Card>
         )}
 
         {/* Chapters */}
-        {detail.chapters && detail.chapters.length > 0 && (
+        {chapters.length > 0 && (
           <Card className="mt-6 mb-8">
             <CardContent className="pt-6">
               <h2 className="text-lg font-semibold mb-3">
-                Chapters ({detail.chapters.length})
+                Chapters ({chapters.length})
               </h2>
               <ScrollArea className="h-96">
                 <div className="space-y-2">
-                  {detail.chapters.map((chapter) => (
+                  {chapters.map((chapter) => (
                     <Link
                       key={chapter.slug}
                       to={`/mangasusuku/chapter/${chapter.slug}`}
