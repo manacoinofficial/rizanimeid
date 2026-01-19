@@ -84,11 +84,27 @@ export interface MangasusukuGenreResponse {
 export interface MangasusukuDetailResponse {
   success?: boolean;
   data?: MangasusukuDetail;
+  // Top level fields (API returns data at top level)
+  title?: string;
+  alternativeTitle?: string;
+  image?: string;
+  rating?: string;
+  synopsis?: string;
+  info?: Record<string, string>;
+  genres?: string[];
+  chapters?: MangasusukuChapter[];
 }
 
 export interface MangasusukuChapterResponse {
   success?: boolean;
   data?: MangasusukuChapterData;
+  // Top level fields
+  title?: string;
+  images?: string[];
+  navigation?: {
+    prev?: string;
+    next?: string;
+  };
 }
 
 // Helper to extract items from response

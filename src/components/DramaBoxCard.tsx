@@ -13,10 +13,33 @@ interface DramaBoxCardProps {
 }
 
 const DramaBoxCard = ({ item }: DramaBoxCardProps) => {
-  const bookId = item.bookId || item.id;
   const poster = item.poster || item.cover || item.image;
   const title = item.title || item.judul || 'Unknown Title';
   const episodeCount = item.episodes || item.total_episode;
+  
+  // Extract bookId from cover URL if null (format: .../42000003894/42000003894.jpg)
+  let bookId = item.bookId || item.id;
+  if (!bookId && poster) {
+    const match = poster.match(/\/(\d{11})\/\d{11}\./);
+    if (match) {
+      bookId = match[1];
+    }
+  }
+  
+  // If still no bookId, don't render a link
+  if (!bookId) {
+    return (
+      <div className="group relative block overflow-hidden rounded-lg bg-card opacity-50">
+        <div className="relative aspect-[2/3] overflow-hidden">
+          <img src={poster || '/placeholder.svg'} alt={title} className="h-full w-full object-cover" loading="lazy" />
+        </div>
+        <div className="p-3">
+          <h3 className="line-clamp-2 text-sm font-medium leading-tight text-foreground">{title}</h3>
+          <p className="mt-1 text-xs text-muted-foreground">Unavailable</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <Link
