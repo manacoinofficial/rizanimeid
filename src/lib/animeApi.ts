@@ -223,7 +223,7 @@ export const animeApi = {
   },
 
   getAllAnime: async (): Promise<AnimeListResponse> => {
-    const response = await fetch(`${BASE_URL}/anime/zoronime/all-anime`);
+    const response = await fetch(`${BASE_URL}/anime/unlimited`);
     return response.json();
   },
 
