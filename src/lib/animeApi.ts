@@ -176,7 +176,7 @@ export const animeApi = {
   },
 
   getCompleted: async (page: number = 1): Promise<AnimeListResponse> => {
-    const response = await fetch(`${BASE_URL}/anime/animasu/completed?page=${page}`);
+    const response = await fetch(`${BASE_URL}/anime/complete-anime?page=${page}`);
     return response.json();
   },
 
