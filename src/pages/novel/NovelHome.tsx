@@ -33,7 +33,7 @@ const NovelHome = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/novel/search/${searchQuery}`);
+      navigate(`/novel/sakuranovel/search?q=${searchQuery}`);
     }
   };
 
