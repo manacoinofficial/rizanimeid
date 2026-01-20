@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight, ArrowLeft, Loader2, RefreshCw, AlertCircle } from 'lucide-react';
-import { dramaboxApi, getTitle, getPoster } from '@/lib/dramaboxApi';
+import { dramaboxApi, getTitle, getPoster, DramaBoxStreamData } from '@/lib/dramaboxApi';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -41,13 +41,14 @@ const DramaBoxWatch = () => {
 
   // Add to watch history when episode loads
   useEffect(() => {
-    if (data?.data && detailData?.data && bookId) {
-      const detail = detailData.data;
+    const streamData = data?.data || data;
+    const detailInfo = detailData?.data || detailData;
+    if (streamData && detailInfo && bookId) {
       addToHistory({
         type: 'dramabox',
         slug: bookId,
-        title: getTitle(detail),
-        cover: getPoster(detail) || '/placeholder.svg',
+        title: getTitle(detailInfo),
+        cover: getPoster(detailInfo) || '/placeholder.svg',
         lastEpisode: String(episodeNum),
         lastEpisodeId: String(episodeNum),
       });
@@ -68,7 +69,12 @@ const DramaBoxWatch = () => {
     );
   }
 
-  if (error || !data?.data) {
+  // Handle API response - data might be at top level or nested
+  const stream = (data?.data || data) as DramaBoxStreamData | undefined;
+  const videoUrl = stream?.streamUrl || stream?.videoUrl || (stream as any)?.url;
+  const totalEps = stream?.totalEpisodes;
+
+  if (error || !stream) {
     return (
       <div className="container mx-auto flex flex-col items-center justify-center gap-4 px-4 py-20">
         <AlertCircle className="h-12 w-12 text-destructive" />
@@ -88,10 +94,6 @@ const DramaBoxWatch = () => {
       </div>
     );
   }
-
-  const stream = data.data;
-  const videoUrl = stream.streamUrl || stream.videoUrl || stream.url;
-  const totalEps = stream.totalEpisodes;
 
   return (
     <div className="min-h-screen bg-background">

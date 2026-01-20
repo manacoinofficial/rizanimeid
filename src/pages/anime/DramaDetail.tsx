@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
-import { animeApi } from '@/lib/animeApi';
+import { animeApi, AnimeDetailData } from '@/lib/animeApi';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,10 @@ const DramaDetail = () => {
 
   if (isLoading) return <LoadingSkeleton />;
 
-  const detail = data?.data;
+  // Handle API response - data might be at top level or nested under data
+  const rawData = data as any;
+  const detail: AnimeDetailData | null = rawData?.data?.title ? rawData.data : rawData?.title ? rawData : null;
+  
   if (!detail) {
     return (
       <div className="container mx-auto px-4 py-8 text-center">

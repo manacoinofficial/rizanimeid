@@ -1,7 +1,26 @@
 import { Link } from 'react-router-dom';
-import { Heart, Twitter, Gift, Tv, Film, BookOpen, BookText } from 'lucide-react';
+import { Heart, Twitter, Gift, Tv, Film, BookOpen, BookText, Wallet, Copy, Check } from 'lucide-react';
+import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
+
+const donationMethods = [
+  { name: 'GoPay', number: '085974238938', color: 'bg-[#00AA13]', icon: '💚' },
+  { name: 'Dana', number: '085974238938', color: 'bg-[#108EE9]', icon: '💙' },
+  { name: 'OVO', number: '085974238938', color: 'bg-[#4C3494]', icon: '💜' },
+];
 
 export const Footer = () => {
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+
+  const copyToClipboard = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    toast.success('Nomor berhasil disalin!');
+    setTimeout(() => setCopiedIndex(null), 2000);
+  };
+
   const contentLinks = [
     { to: '/', label: 'Donghua', icon: Film },
     { to: '/anime', label: 'Anime', icon: Tv },
@@ -93,12 +112,38 @@ export const Footer = () => {
             </ul>
           </div>
 
-          {/* About */}
+          {/* Donation */}
           <div className="space-y-4">
-            <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">About</h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Sakanan!me provides free streaming with Indonesian subtitles. All content belongs to their respective owners.
-            </p>
+            <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <Wallet className="h-4 w-4" />
+              Support Us
+            </h4>
+            <div className="space-y-2">
+              {donationMethods.map((method, index) => (
+                <Button
+                  key={method.name}
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-between text-xs h-8 px-2"
+                  onClick={() => copyToClipboard(method.number, index)}
+                >
+                  <span className="flex items-center gap-1">
+                    <Badge className={`${method.color} text-white border-0 text-[10px] px-1`}>
+                      {method.icon}
+                    </Badge>
+                    {method.name}
+                  </span>
+                  {copiedIndex === index ? (
+                    <Check className="h-3 w-3 text-green-500" />
+                  ) : (
+                    <Copy className="h-3 w-3 text-muted-foreground" />
+                  )}
+                </Button>
+              ))}
+              <p className="text-[10px] text-muted-foreground text-center">
+                085974238938
+              </p>
+            </div>
           </div>
         </div>
 

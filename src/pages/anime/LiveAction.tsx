@@ -24,8 +24,8 @@ const LiveAction = () => {
     queryFn: () => animeApi.getLiveAction(),
   });
 
-  // Extract anime_list from response (not data.animeList)
-  const actionList: LiveActionItem[] = (data as any)?.anime_list || [];
+  // Extract anime_list from response - handle both formats
+  const actionList: LiveActionItem[] = (data as any)?.data?.anime_list || (data as any)?.anime_list || [];
 
   const filteredList = useMemo(() => {
     if (!searchQuery.trim()) return actionList;

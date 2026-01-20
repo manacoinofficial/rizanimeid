@@ -24,8 +24,8 @@ const JDrama = () => {
     queryFn: () => animeApi.getJDrama(),
   });
 
-  // Extract anime_list from response (not data.animeList)
-  const dramaList: DramaItem[] = (data as any)?.anime_list || [];
+  // Extract anime_list from response - handle both formats
+  const dramaList: DramaItem[] = (data as any)?.data?.anime_list || (data as any)?.anime_list || [];
 
   const filteredList = useMemo(() => {
     if (!searchQuery.trim()) return dramaList;
