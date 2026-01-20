@@ -26,11 +26,26 @@ const MangasusukuChapter = () => {
   const images = (chapter as any)?.images || [];
   const mangaSlug = slug?.replace(/-chapter-\d+.*$/, '').replace(/-season-\d+-chapter-\d+.*$/, '') || slug?.replace(/-\d+$/, '') || slug;
   
-  // Navigation - API returns strings like "#/prev/" or actual slugs
+  // Navigation - API may return strings directly or objects with slug property
   const navPrev = (chapter as any)?.navigation?.prev;
   const navNext = (chapter as any)?.navigation?.next;
-  const prevSlug = navPrev && typeof navPrev === 'string' && !navPrev.includes('#') ? navPrev.replace(/\/$/, '') : null;
-  const nextSlug = navNext && typeof navNext === 'string' && !navNext.includes('#') ? navNext.replace(/\/$/, '') : null;
+  
+  // Handle both string slugs and object { slug: string } format
+  const extractSlug = (nav: any): string | null => {
+    if (!nav) return null;
+    if (typeof nav === 'string') {
+      // Skip placeholder values like "#/prev/" or "#"
+      if (nav.includes('#') || nav === '' || nav === '/') return null;
+      return nav.replace(/\/$/, '');
+    }
+    if (typeof nav === 'object' && nav.slug) {
+      return nav.slug.replace(/\/$/, '');
+    }
+    return null;
+  };
+  
+  const prevSlug = extractSlug(navPrev);
+  const nextSlug = extractSlug(navNext);
 
   useEffect(() => {
     if (chapter && slug && mangaSlug) {
@@ -95,8 +110,20 @@ const MangasusukuChapter = () => {
           </div>
           <h1 className="text-sm font-medium truncate max-w-[200px] md:max-w-md">{chapter.title}</h1>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" disabled={!prevSlug} onClick={() => prevSlug && navigate(`/mangasusuku/chapter/${prevSlug}`)}><ChevronLeft className="h-4 w-4" /></Button>
-            <Button variant="ghost" size="icon" disabled={!nextSlug} onClick={() => nextSlug && navigate(`/mangasusuku/chapter/${nextSlug}`)}><ChevronRight className="h-4 w-4" /></Button>
+            {prevSlug ? (
+              <Link to={`/mangasusuku/chapter/${prevSlug}`}>
+                <Button variant="ghost" size="icon"><ChevronLeft className="h-4 w-4" /></Button>
+              </Link>
+            ) : (
+              <Button variant="ghost" size="icon" disabled><ChevronLeft className="h-4 w-4" /></Button>
+            )}
+            {nextSlug ? (
+              <Link to={`/mangasusuku/chapter/${nextSlug}`}>
+                <Button variant="ghost" size="icon"><ChevronRight className="h-4 w-4" /></Button>
+              </Link>
+            ) : (
+              <Button variant="ghost" size="icon" disabled><ChevronRight className="h-4 w-4" /></Button>
+            )}
           </div>
         </div>
       </div>
@@ -109,9 +136,21 @@ const MangasusukuChapter = () => {
 
       <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur border-t">
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-          <Button variant="outline" disabled={!prevSlug} onClick={() => prevSlug && navigate(`/mangasusuku/chapter/${prevSlug}`)}><ChevronLeft className="h-4 w-4 mr-2" /> Previous</Button>
+          {prevSlug ? (
+            <Link to={`/mangasusuku/chapter/${prevSlug}`}>
+              <Button variant="outline"><ChevronLeft className="h-4 w-4 mr-2" /> Previous</Button>
+            </Link>
+          ) : (
+            <Button variant="outline" disabled><ChevronLeft className="h-4 w-4 mr-2" /> Previous</Button>
+          )}
           <Link to={`/mangasusuku/detail/${mangaSlug}`}><Button variant="ghost">All Chapters</Button></Link>
-          <Button variant="outline" disabled={!nextSlug} onClick={() => nextSlug && navigate(`/mangasusuku/chapter/${nextSlug}`)}>Next <ChevronRight className="h-4 w-4 ml-2" /></Button>
+          {nextSlug ? (
+            <Link to={`/mangasusuku/chapter/${nextSlug}`}>
+              <Button variant="outline">Next <ChevronRight className="h-4 w-4 ml-2" /></Button>
+            </Link>
+          ) : (
+            <Button variant="outline" disabled>Next <ChevronRight className="h-4 w-4 ml-2" /></Button>
+          )}
         </div>
       </div>
     </div>
