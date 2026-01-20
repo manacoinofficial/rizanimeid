@@ -87,12 +87,12 @@ export const novelApi = {
     return response.json();
   },
 
-  search: async (query: string, page: number = 1) => {
+  search: async (keyword: string, page: number = 1) => {
     if (page === 1) {
-      const response = await fetch(`${BASE_URL}/novel/meionovel/search/${encodeURIComponent(query)}`);
+      const response = await fetch(`${BASE_URL}/novel/sakuranovel/search?q=${keyword}`);
       return response.json();
     }
-    const response = await fetch(`${BASE_URL}/novel/meionovel/search/${encodeURIComponent(query)}/${page}`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/search?q=${keyword}/${page}`);
     return response.json();
   },
 };
