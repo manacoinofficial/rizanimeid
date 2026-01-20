@@ -30,19 +30,29 @@ export interface NovelDetail {
 }
 
 export const novelApi = {
-  // MeioNovel endpoints
+  // Sakuranovel endpoints
   getHome: async () => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/home`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/home`);
+    return response.json();
+  },
+
+  getHomeV2: async (page: number = 1) => {
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/home?page=${page}`);
     return response.json();
   },
 
   getPopular: async () => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/popular`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/popular`);
+    return response.json();
+  },
+
+  getTag: async () => {
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/tags`);
     return response.json();
   },
 
   getLatest: async () => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/latest`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/daftar-novel`);
     return response.json();
   },
 
@@ -52,28 +62,28 @@ export const novelApi = {
   },
 
   getGenres: async () => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/genres`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/genres`);
     return response.json();
   },
 
   getByGenre: async (slug: string, page: number = 1) => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/genre/${slug}/${page}`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/genre/${slug}/${page}`);
     return response.json();
   },
 
   getDetail: async (slug: string) => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/detail/${slug}`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/detail/${slug}`);
     return response.json();
   },
 
-  getChapter: async (novelSlug: string, chapterSlug: string) => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/chapter/${novelSlug}/${chapterSlug}`);
+  getChapter: async (slug: string) => {
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/tag/${slug}`);
     return response.json();
   },
 
   // Alternative chapter endpoint using single slug
   getChapterBySlug: async (slug: string) => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/chapter/${slug}`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/read/${slug}`);
     return response.json();
   },
 
