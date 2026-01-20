@@ -34,6 +34,17 @@ const NovelChapter = () => {
     enabled: !!(effectiveNovelSlug || slug),
   });
 
+  // Helper to extract navigation slug (handles both string and object)
+  const extractNavSlug = (nav: any): string | null => {
+    if (!nav) return null;
+    if (typeof nav === 'string') return nav;
+    if (typeof nav === 'object' && nav.slug) return nav.slug;
+    return null;
+  };
+
+  const prevSlug = extractNavSlug(data?.navigation?.prev);
+  const nextSlug = extractNavSlug(data?.navigation?.next);
+
   // Load saved font size
   useEffect(() => {
     const saved = localStorage.getItem('novel-font-size');
@@ -112,25 +123,33 @@ const NovelChapter = () => {
               >
                 <Settings className="h-4 w-4" />
               </Button>
-              {data.navigation?.prev && (
+              {prevSlug ? (
                 <Link to={isSlugOnlyRoute 
-                  ? `/novel/meionovel/chapter/${data.navigation.prev}` 
-                  : `/novel/meionovel/chapter/${effectiveNovelSlug}/${data.navigation.prev}`
+                  ? `/novel/meionovel/chapter/${prevSlug}` 
+                  : `/novel/meionovel/chapter/${effectiveNovelSlug}/${prevSlug}`
                 }>
                   <Button variant="outline" size="sm">
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
                 </Link>
+              ) : (
+                <Button variant="outline" size="sm" disabled>
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
               )}
-              {data.navigation?.next && (
+              {nextSlug ? (
                 <Link to={isSlugOnlyRoute 
-                  ? `/novel/meionovel/chapter/${data.navigation.next}` 
-                  : `/novel/meionovel/chapter/${effectiveNovelSlug}/${data.navigation.next}`
+                  ? `/novel/meionovel/chapter/${nextSlug}` 
+                  : `/novel/meionovel/chapter/${effectiveNovelSlug}/${nextSlug}`
                 }>
                   <Button variant="outline" size="sm">
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </Link>
+              ) : (
+                <Button variant="outline" size="sm" disabled>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               )}
             </div>
           </div>
@@ -195,10 +214,10 @@ const NovelChapter = () => {
       {/* Bottom Navigation */}
       <div className="sticky bottom-0 bg-card/95 backdrop-blur border-t p-4">
         <div className="container mx-auto flex items-center justify-between max-w-3xl">
-          {data.navigation?.prev ? (
+          {prevSlug ? (
             <Link to={isSlugOnlyRoute 
-              ? `/novel/meionovel/chapter/${data.navigation.prev}` 
-              : `/novel/meionovel/chapter/${effectiveNovelSlug}/${data.navigation.prev}`
+              ? `/novel/meionovel/chapter/${prevSlug}` 
+              : `/novel/meionovel/chapter/${effectiveNovelSlug}/${prevSlug}`
             }>
               <Button variant="default">
                 <ChevronLeft className="h-4 w-4 mr-1" />
@@ -206,7 +225,10 @@ const NovelChapter = () => {
               </Button>
             </Link>
           ) : (
-            <div />
+            <Button variant="default" disabled>
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
           )}
 
           <Link to={`/novel/meionovel/detail/${effectiveNovelSlug || slug}`}>
@@ -216,10 +238,10 @@ const NovelChapter = () => {
             </Button>
           </Link>
 
-          {data.navigation?.next ? (
+          {nextSlug ? (
             <Link to={isSlugOnlyRoute 
-              ? `/novel/meionovel/chapter/${data.navigation.next}` 
-              : `/novel/meionovel/chapter/${effectiveNovelSlug}/${data.navigation.next}`
+              ? `/novel/meionovel/chapter/${nextSlug}` 
+              : `/novel/meionovel/chapter/${effectiveNovelSlug}/${nextSlug}`
             }>
               <Button variant="default">
                 Next
@@ -227,7 +249,10 @@ const NovelChapter = () => {
               </Button>
             </Link>
           ) : (
-            <div />
+            <Button variant="default" disabled>
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
           )}
         </div>
       </div>

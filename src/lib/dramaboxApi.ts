@@ -128,7 +128,9 @@ export const getEpisodeNumber = (ep: DramaBoxEpisode): number => {
 // Helper to get total episodes from detail data
 export const getTotalEpisodes = (detail: DramaBoxDetailData): number => {
   const episodes = detail.episodes || detail.episodeList || [];
-  return detail.jumlah_episode_tersedia ?? detail.episodeCount ?? detail.totalEpisodes ?? detail.total_episodes ?? episodes.length ?? 0;
+  // Parse total_episode as it may be a string
+  const totalEpString = detail.total_episode ? parseInt(detail.total_episode, 10) : 0;
+  return detail.jumlah_episode_tersedia ?? detail.episodeCount ?? detail.totalEpisodes ?? detail.total_episodes ?? totalEpString ?? episodes.length ?? 0;
 };
 
 // Helper to get title from detail data

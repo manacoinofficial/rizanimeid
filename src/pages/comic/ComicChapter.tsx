@@ -57,18 +57,29 @@ const ComicChapter = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Helper to extract slug from navigation (handles both string and object)
+  const extractSlug = (nav: any): string | null => {
+    if (!nav) return null;
+    if (typeof nav === 'string') return nav;
+    if (typeof nav === 'object' && nav.slug) return nav.slug;
+    return null;
+  };
+
+  const prevSlug = extractSlug(data?.navigation?.prev);
+  const nextSlug = extractSlug(data?.navigation?.next);
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft' && data?.navigation?.prev?.slug) {
-        navigate(`/comic/bacakomik/chapter/${data.navigation.prev.slug}`);
-      } else if (e.key === 'ArrowRight' && data?.navigation?.next?.slug) {
-        navigate(`/comic/bacakomik/chapter/${data.navigation.next.slug}`);
+      if (e.key === 'ArrowLeft' && prevSlug) {
+        navigate(`/comic/bacakomik/chapter/${prevSlug}`);
+      } else if (e.key === 'ArrowRight' && nextSlug) {
+        navigate(`/comic/bacakomik/chapter/${nextSlug}`);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [data, navigate]);
+  }, [prevSlug, nextSlug, navigate]);
 
   if (isLoading) return <LoadingSkeleton />;
 
@@ -112,21 +123,31 @@ const ComicChapter = () => {
             </h1>
 
             <div className="flex items-center gap-2">
-              {data.navigation?.prev?.slug && (
-                <Link to={`/comic/bacakomik/chapter/${data.navigation.prev.slug}`}>
+              {prevSlug ? (
+                <Link to={`/comic/bacakomik/chapter/${prevSlug}`}>
                   <Button variant="outline" size="sm">
                     <ChevronLeft className="h-4 w-4" />
                     <span className="hidden sm:inline ml-1">Prev</span>
                   </Button>
                 </Link>
+              ) : (
+                <Button variant="outline" size="sm" disabled>
+                  <ChevronLeft className="h-4 w-4" />
+                  <span className="hidden sm:inline ml-1">Prev</span>
+                </Button>
               )}
-              {data.navigation?.next?.slug && (
-                <Link to={`/comic/bacakomik/chapter/${data.navigation.next.slug}`}>
+              {nextSlug ? (
+                <Link to={`/comic/bacakomik/chapter/${nextSlug}`}>
                   <Button variant="outline" size="sm">
                     <span className="hidden sm:inline mr-1">Next</span>
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </Link>
+              ) : (
+                <Button variant="outline" size="sm" disabled>
+                  <span className="hidden sm:inline mr-1">Next</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               )}
             </div>
           </div>
@@ -151,15 +172,18 @@ const ComicChapter = () => {
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card/95 backdrop-blur border-t p-4">
         <div className="container mx-auto flex items-center justify-between">
-          {data.navigation?.prev?.slug ? (
-            <Link to={`/comic/bacakomik/chapter/${data.navigation.prev.slug}`}>
+          {prevSlug ? (
+            <Link to={`/comic/bacakomik/chapter/${prevSlug}`}>
               <Button variant="default">
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Previous
               </Button>
             </Link>
           ) : (
-            <div />
+            <Button variant="default" disabled>
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
           )}
 
           <Link to={`/comic/detail/${comicSlug}`}>
@@ -169,15 +193,18 @@ const ComicChapter = () => {
             </Button>
           </Link>
 
-          {data.navigation?.next?.slug ? (
-            <Link to={`/comic/bacakomik/chapter/${data.navigation.next.slug}`}>
+          {nextSlug ? (
+            <Link to={`/comic/bacakomik/chapter/${nextSlug}`}>
               <Button variant="default">
                 Next
                 <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
             </Link>
           ) : (
-            <div />
+            <Button variant="default" disabled>
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
           )}
         </div>
       </div>

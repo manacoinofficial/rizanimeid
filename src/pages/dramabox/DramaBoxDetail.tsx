@@ -42,7 +42,11 @@ const DramaBoxDetail = () => {
     );
   }
 
-  if (error || !data?.data) {
+  // Handle API response - data might be at top level or nested
+  const detail = data?.data || (data as any);
+  const hasValidDetail = detail && (detail.title || detail.judul || detail.bookId || detail.id);
+
+  if (error || !hasValidDetail) {
     return (
       <div className="container mx-auto flex flex-col items-center justify-center gap-4 px-4 py-20">
         <p className="text-lg text-muted-foreground">Drama not found</p>
@@ -56,7 +60,6 @@ const DramaBoxDetail = () => {
     );
   }
 
-  const detail = data.data;
   const poster = getPoster(detail);
   const description = getDescription(detail);
   const rating = getRating(detail);
