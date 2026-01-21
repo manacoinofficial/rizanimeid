@@ -26,12 +26,10 @@ const NovelChapter = () => {
   const { data, isLoading } = useQuery({
     queryKey: ['novel-chapter', effectiveNovelSlug, effectiveChapterSlug],
     queryFn: () => {
-      if (isSlugOnlyRoute) {
-        return novelApi.getChapterBySlug(slug!);
-      }
-      return novelApi.getChapter(effectiveNovelSlug, effectiveChapterSlug);
+      // Use chapter slug for the API call
+      return novelApi.getChapter(effectiveChapterSlug || slug!);
     },
-    enabled: !!(effectiveNovelSlug || slug),
+    enabled: !!(effectiveChapterSlug || slug),
   });
 
   // Helper to extract navigation slug (handles both string and object)
