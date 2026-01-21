@@ -46,8 +46,13 @@ export const novelApi = {
     return response.json();
   },
 
-  getTag: async () => {
+  getTags: async () => {
     const response = await fetch(`${BASE_URL}/novel/sakuranovel/tags`);
+    return response.json();
+  },
+
+  getByTag: async (slug: string) => {
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/tags/${slug}`);
     return response.json();
   },
 
@@ -56,8 +61,8 @@ export const novelApi = {
     return response.json();
   },
 
-  getList: async (page: number = 1, orderby: string = 'latest') => {
-    const response = await fetch(`${BASE_URL}/novel/meionovel/list?page=${page}&orderby=${orderby}`);
+  getList: async (page: number = 1) => {
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/home?page=${page}`);
     return response.json();
   },
 
@@ -67,6 +72,10 @@ export const novelApi = {
   },
 
   getByGenre: async (slug: string, page: number = 1) => {
+    if (page === 1) {
+      const response = await fetch(`${BASE_URL}/novel/sakuranovel/genre/${slug}`);
+      return response.json();
+    }
     const response = await fetch(`${BASE_URL}/novel/sakuranovel/genre/${slug}/${page}`);
     return response.json();
   },
@@ -77,7 +86,7 @@ export const novelApi = {
   },
 
   getChapter: async (slug: string) => {
-    const response = await fetch(`${BASE_URL}/novel/sakuranovel/tag/${slug}`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/read/${slug}`);
     return response.json();
   },
 
@@ -88,11 +97,12 @@ export const novelApi = {
   },
 
   search: async (keyword: string, page: number = 1) => {
-    if (page === 1) {
-      const response = await fetch(`${BASE_URL}/novel/sakuranovel/search?q=${keyword}`);
-      return response.json();
-    }
-    const response = await fetch(`${BASE_URL}/novel/sakuranovel/search?q=${keyword}/${page}`);
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/search?q=${encodeURIComponent(keyword)}`);
+    return response.json();
+  },
+
+  advancedSearch: async (status: string) => {
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/advanced-search?status=${status}`);
     return response.json();
   },
 };
