@@ -96,7 +96,7 @@ const NovelChapter = () => {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Link to={`/novel/meionovel/detail/${effectiveNovelSlug || slug}`}>
+              <Link to={`/novel/sakuranovel/detail/${effectiveNovelSlug || slug}`}>
                 <Button variant="ghost" size="sm">
                   <List className="h-4 w-4 mr-1" />
                   <span className="hidden sm:inline">Chapters</span>
@@ -123,8 +123,8 @@ const NovelChapter = () => {
               </Button>
               {prevSlug ? (
                 <Link to={isSlugOnlyRoute 
-                  ? `/novel/meionovel/chapter/${prevSlug}` 
-                  : `/novel/meionovel/chapter/${effectiveNovelSlug}/${prevSlug}`
+                  ? `/novel/sakuranovel/chapter/${prevSlug}` 
+                  : `/novel/sakuranovel/chapter/${effectiveNovelSlug}/${prevSlug}`
                 }>
                   <Button variant="outline" size="sm">
                     <ChevronLeft className="h-4 w-4" />
@@ -137,8 +137,8 @@ const NovelChapter = () => {
               )}
               {nextSlug ? (
                 <Link to={isSlugOnlyRoute 
-                  ? `/novel/meionovel/chapter/${nextSlug}` 
-                  : `/novel/meionovel/chapter/${effectiveNovelSlug}/${nextSlug}`
+                  ? `/novel/sakuranovel/chapter/${nextSlug}` 
+                  : `/novel/sakuranovel/chapter/${effectiveNovelSlug}/${nextSlug}`
                 }>
                   <Button variant="outline" size="sm">
                     <ChevronRight className="h-4 w-4" />
@@ -214,8 +214,8 @@ const NovelChapter = () => {
         <div className="container mx-auto flex items-center justify-between max-w-3xl">
           {prevSlug ? (
             <Link to={isSlugOnlyRoute 
-              ? `/novel/meionovel/chapter/${prevSlug}` 
-              : `/novel/meionovel/chapter/${effectiveNovelSlug}/${prevSlug}`
+              ? `/novel/sakuranovel/chapter/${prevSlug}` 
+              : `/novel/sakuranovel/chapter/${effectiveNovelSlug}/${prevSlug}`
             }>
               <Button variant="default">
                 <ChevronLeft className="h-4 w-4 mr-1" />
@@ -229,7 +229,7 @@ const NovelChapter = () => {
             </Button>
           )}
 
-          <Link to={`/novel/meionovel/detail/${effectiveNovelSlug || slug}`}>
+          <Link to={`/novel/sakuranovel/detail/${effectiveNovelSlug || slug}`}>
             <Button variant="outline">
               <List className="h-4 w-4 mr-2" />
               All Chapters
@@ -238,8 +238,8 @@ const NovelChapter = () => {
 
           {nextSlug ? (
             <Link to={isSlugOnlyRoute 
-              ? `/novel/meionovel/chapter/${nextSlug}` 
-              : `/novel/meionovel/chapter/${effectiveNovelSlug}/${nextSlug}`
+              ? `/novel/sakuranovel/chapter/${nextSlug}` 
+              : `/novel/sakuranovel/chapter/${effectiveNovelSlug}/${nextSlug}`
             }>
               <Button variant="default">
                 Next
