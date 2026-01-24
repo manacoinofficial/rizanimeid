@@ -51,8 +51,8 @@ export const novelApi = {
     return response.json();
   },
 
-  getByTag: async (slug: string) => {
-    const response = await fetch(`${BASE_URL}/novel/sakuranovel/tags/${slug}`);
+  getByTag: async (tags: string) => {
+    const response = await fetch(`${BASE_URL}/novel/sakuranovel/tags/${tags}`);
     return response.json();
   },
 
