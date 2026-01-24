@@ -171,7 +171,7 @@ export const animeApi = {
   },
 
   getOngoing: async (page: number = 1): Promise<AnimeListResponse> => {
-    const response = await fetch(`${BASE_URL}/anime/animasu/ongoing?page=${page}`);
+    const response = await fetch(`${BASE_URL}/anime/ongoing-anime?page=${page}`);
     return response.json();
   },
 
