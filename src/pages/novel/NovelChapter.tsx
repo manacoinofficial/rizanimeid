@@ -122,10 +122,7 @@ const NovelChapter = () => {
                 <Settings className="h-4 w-4" />
               </Button>
               {prevSlug ? (
-                <Link to={isSlugOnlyRoute 
-                  ? `/novel/sakuranovel/chapter/${prevSlug}` 
-                  : `/novel/sakuranovel/chapter/${effectiveNovelSlug}/${prevSlug}`
-                }>
+                <Link to={`/novel/sakuranovel/chapter/${prevSlug}`}>
                   <Button variant="outline" size="sm">
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
@@ -136,10 +133,7 @@ const NovelChapter = () => {
                 </Button>
               )}
               {nextSlug ? (
-                <Link to={isSlugOnlyRoute 
-                  ? `/novel/sakuranovel/chapter/${nextSlug}` 
-                  : `/novel/sakuranovel/chapter/${effectiveNovelSlug}/${nextSlug}`
-                }>
+                <Link to={`/novel/sakuranovel/chapter/${nextSlug}`}>
                   <Button variant="outline" size="sm">
                     <ChevronRight className="h-4 w-4" />
                   </Button>
@@ -213,10 +207,7 @@ const NovelChapter = () => {
       <div className="sticky bottom-0 bg-card/95 backdrop-blur border-t p-4">
         <div className="container mx-auto flex items-center justify-between max-w-3xl">
           {prevSlug ? (
-            <Link to={isSlugOnlyRoute 
-              ? `/novel/sakuranovel/chapter/${prevSlug}` 
-              : `/novel/sakuranovel/chapter/${effectiveNovelSlug}/${prevSlug}`
-            }>
+            <Link to={`/novel/sakuranovel/chapter/${prevSlug}`}>
               <Button variant="default">
                 <ChevronLeft className="h-4 w-4 mr-1" />
                 Previous
@@ -237,10 +228,7 @@ const NovelChapter = () => {
           </Link>
 
           {nextSlug ? (
-            <Link to={isSlugOnlyRoute 
-              ? `/novel/sakuranovel/chapter/${nextSlug}` 
-              : `/novel/sakuranovel/chapter/${effectiveNovelSlug}/${nextSlug}`
-            }>
+            <Link to={`/novel/sakuranovel/chapter/${nextSlug}`}>
               <Button variant="default">
                 Next
                 <ChevronRight className="h-4 w-4 ml-1" />
