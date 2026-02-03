@@ -152,7 +152,7 @@ export const Footer = () => {
             © {new Date().getFullYear()} Sakanan!me. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="h-4 w-4 text-destructive fill-destructive" /> for anime fans
+            Made with <Heart className="h-4 w-4 text-destructive fill-destructive" /> for sakananime Apis
           </p>
         </div>
       </div>
