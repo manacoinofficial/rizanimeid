@@ -37,8 +37,8 @@ export const Navbar = () => {
     { to: '/dramabox', label: 'DramaChina', icon: Clapperboard },
     { to: '/install', label: 'Aplikasi', icon: Download },
     { to: '/tvshow', label: 'TV Show', icon: Tv },
-    { to: '/doc', label: 'Doc', icon: FileText },
-    { to: '/sakanaai', label: 'Sakana AI', icon: Sparkles },
+    { to: '/doc', label: 'doc', icon: FileText },
+    { to: '/sakanaai', label: 'SakanaAI', icon: Sparkles },
   ];
 
   const browseLinks = [
