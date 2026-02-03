@@ -106,6 +106,7 @@ import Install from "./pages/Install";
 // Doc and AI pages
 import Doc from "./pages/Doc";
 import SakanaAI from "./pages/SakanaAI";
+
 const queryClient = new QueryClient();
 
 const App = () => {
