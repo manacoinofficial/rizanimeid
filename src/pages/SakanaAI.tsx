@@ -96,7 +96,7 @@ const SakanaAI = () => {
         </div>
         <h1 className="text-4xl font-bold text-gradient mb-2">Sakana AI</h1>
         <p className="text-muted-foreground">
-          Chat with AI powered by OpenRouter - Generate text and images!
+          Chat with AI powered by Sakana AI- Generate text and images!
         </p>
       </div>
 
@@ -237,7 +237,7 @@ const SakanaAI = () => {
           <CardContent className="p-4 text-center">
             <Sparkles className="h-8 w-8 mx-auto mb-2 text-primary" />
             <h3 className="font-semibold text-sm">Free to Use</h3>
-            <p className="text-xs text-muted-foreground">Powered by OpenRouter</p>
+            <p className="text-xs text-muted-foreground">Powered by Sakananime Apis</p>
           </CardContent>
         </Card>
       </div>
