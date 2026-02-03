@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Code, Server, Zap } from "lucide-react";
 
-const BASE_URL = "https://www.sankavollerei.com";
+const BASE_URL = "https://sakananime.vercel.app";
 
 interface EndpointInfo {
   method: string;
@@ -13,25 +13,25 @@ interface EndpointInfo {
 }
 
 const animeEndpoints: EndpointInfo[] = [
-  { method: "GET", path: "/sakananime/anime", description: "Get home/featured anime list" },
-  { method: "GET", path: "/sakananime/anime/detail/{slug}", description: "Get anime detail by slug", example: "/sakananime/anime/detail/one-piece" },
-  { method: "GET", path: "/sakananime/anime/episode/{slug}", description: "Get episode streaming links", example: "/sakananime/anime/episode/one-piece-episode-1" },
-  { method: "GET", path: "/sakananime/anime/ongoing", description: "Get ongoing anime list" },
-  { method: "GET", path: "/sakananime/anime/completed", description: "Get completed anime list" },
-  { method: "GET", path: "/sakananime/anime/schedule", description: "Get anime schedule" },
-  { method: "GET", path: "/sakananime/anime/search?q={keyword}", description: "Search anime", example: "/sakananime/anime/search?q=naruto" },
-  { method: "GET", path: "/sakananime/anime/genres", description: "Get all anime genres" },
-  { method: "GET", path: "/sakananime/anime/genre/{slug}", description: "Get anime by genre", example: "/sakananime/anime/genre/action" },
+  { method: "GET", path: "/anime", description: "Get home/featured anime list" },
+  { method: "GET", path: "/anime/detail/{slug}", description: "Get anime detail by slug", example: "/sakananime/anime/detail/one-piece" },
+  { method: "GET", path: "/anime/episode/{slug}", description: "Get episode streaming links", example: "/sakananime/anime/episode/one-piece-episode-1" },
+  { method: "GET", path: "/anime/ongoing", description: "Get ongoing anime list" },
+  { method: "GET", path: "/anime/completed", description: "Get completed anime list" },
+  { method: "GET", path: "/anime/schedule", description: "Get anime schedule" },
+  { method: "GET", path: "/anime/search?q=${keyword}", description: "Search anime", example: "/sakananime/anime/search?q=naruto" },
+  { method: "GET", path: "/anime/genres", description: "Get all anime genres" },
+  { method: "GET", path: "/aanime/genre/${slug}", description: "Get anime by genre", example: "/sakananime/anime/genre/action" },
 ];
 
 const comicEndpoints: EndpointInfo[] = [
-  { method: "GET", path: "/sakananime/comic", description: "Get home/featured comics" },
-  { method: "GET", path: "/sakananime/comic/type/{type}", description: "Get comics by type (manga, manhwa, manhua)", example: "/sakananime/comic/type/manga" },
-  { method: "GET", path: "/sakananime/comic/genres", description: "Get all comic genres" },
-  { method: "GET", path: "/sakananime/comic/genre/{slug}", description: "Get comics by genre", example: "/sakananime/comic/genre/action" },
-  { method: "GET", path: "/sakananime/detail/{slug}", description: "Get comic detail by slug", example: "/sakananime/detail/one-piece" },
-  { method: "GET", path: "/sakananime/comic/chapter/{slug}", description: "Get chapter images", example: "/sakananime/comic/chapter/one-piece-chapter-1" },
-  { method: "GET", path: "/sakananime/comic/search?q={keyword}", description: "Search comics", example: "/sakananime/comic/search?q=solo" },
+  { method: "GET", path: "/comic", description: "Get home/featured comics" },
+  { method: "GET", path: "/comic/type/{type}", description: "Get comics by type (manga, manhwa, manhua)", example: "/sakananime/comic/type/manga" },
+  { method: "GET", path: "/comic/genres", description: "Get all comic genres" },
+  { method: "GET", path: "/comic/genre/{slug}", description: "Get comics by genre", example: "/sakananime/comic/genre/action" },
+  { method: "GET", path: "/detail/{slug}", description: "Get comic detail by slug", example: "/sakananime/detail/one-piece" },
+  { method: "GET", path: "/comic/chapter/{slug}", description: "Get chapter images", example: "/sakananime/comic/chapter/one-piece-chapter-1" },
+  { method: "GET", path: "/comic/search?q={keyword}", description: "Search comics", example: "/sakananime/comic/search?q=solo" },
 ];
 
 const novelEndpoints: EndpointInfo[] = [
@@ -109,7 +109,7 @@ const Api = () => {
             <div className="bg-muted p-4 rounded-lg overflow-x-auto">
               <pre className="text-sm">
 {`// Example: Fetch anime home
-fetch('${BASE_URL}/sakananime/anime')
+fetch('${BASE_URL}/anime')
   .then(res => res.json())
   .then(data => console.log(data));`}
               </pre>
