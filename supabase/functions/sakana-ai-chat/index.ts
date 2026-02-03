@@ -23,7 +23,7 @@ serve(async (req) => {
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://sakananime.com',
+        'HTTP-Referer': 'https://sakananime.vercel.app',
         'X-Title': 'Sakana AI',
       },
       body: JSON.stringify({
