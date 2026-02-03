@@ -103,6 +103,9 @@ import Auth from "./pages/Auth";
 import Account from "./pages/Account";
 import Install from "./pages/Install";
 
+// Doc and AI pages
+import Doc from "./pages/Doc";
+import SakanaAI from "./pages/SakanaAI";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -239,6 +242,10 @@ const App = () => {
 
                 {/* Install PWA Route */}
                 <Route path="/install" element={<Install />} />
+
+                {/* Doc and AI Routes */}
+                <Route path="/doc" element={<Doc />} />
+                <Route path="/sakanaai" element={<SakanaAI />} />
 
                 {/* Aliases (avoid 404 for old/expected URLs) */}
                 <Route path="/history" element={<Navigate to="/library" replace />} />
