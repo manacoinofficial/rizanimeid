@@ -14,9 +14,9 @@ interface Message {
 }
 
 const models = [
-  { id: 'arcee-ai/trinity-large-preview:free', name: 'Trinity Large (Free)' },
-  { id: 'liquid/lfm-2.5-1.2b-thinking:free', name: 'LFM Thinking (Free)' },
-  { id: 'arcee-ai/trinity-mini:free', name: 'Trinity Mini (Free)' },
+  { id: 'arcee-ai/trinity-large-preview:free', name: 'Trinity Large' },
+  { id: 'liquid/lfm-2.5-1.2b-thinking:free', name: 'LFM Thinking' },
+  { id: 'arcee-ai/trinity-mini:free', name: 'Sakananime Mini' },
 ];
 
 const SakanaAI = () => {
