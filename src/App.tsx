@@ -103,9 +103,10 @@ import Auth from "./pages/Auth";
 import Account from "./pages/Account";
 import Install from "./pages/Install";
 
-// Doc and AI pages
+// Doc, API and AI pages
 import Doc from "./pages/Doc";
 import SakanaAI from "./pages/SakanaAI";
+import Api from "./pages/Api";
 
 const queryClient = new QueryClient();
 
@@ -244,9 +245,14 @@ const App = () => {
                 {/* Install PWA Route */}
                 <Route path="/install" element={<Install />} />
 
-                {/* Doc and AI Routes */}
+{/* Doc, API and AI Routes */}
                 <Route path="/doc" element={<Doc />} />
                 <Route path="/sakanaai" element={<SakanaAI />} />
+                <Route path="/api" element={<Api />} />
+
+                {/* Novel sakuranovel chapter routes */}
+                <Route path="/novel/sakuranovel/chapter/:slug" element={<NovelChapter />} />
+                <Route path="/novel/sakuranovel/chapter/:novelSlug/:chapterSlug" element={<NovelChapter />} />
 
                 {/* Aliases (avoid 404 for old/expected URLs) */}
                 <Route path="/history" element={<Navigate to="/library" replace />} />
