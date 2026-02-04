@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => ({
       manifest: {
         name: "sakanan!me",
         short_name: "sakanan!me",
-        description: "Platform gratis Subtitle Indonesia - Donghua, Anime, Comic, Novel, TV Show & News",
+        description: "Platform gratis Subtitle Indonesia - Donghua, Anime, Comic, Novel, TV Show & News, SakanaAi",
         theme_color: "#a855f7",
         background_color: "#0a0a0b",
         display: "standalone",
