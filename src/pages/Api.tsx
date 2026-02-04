@@ -14,24 +14,24 @@ interface EndpointInfo {
 
 const animeEndpoints: EndpointInfo[] = [
   { method: "GET", path: "/anime", description: "Get home/featured anime list" },
-  { method: "GET", path: "/anime/detail/{slug}", description: "Get anime detail by slug", example: "https://sakananime/anime/detail/one-piece" },
-  { method: "GET", path: "/anime/episode/{slug}", description: "Get episode streaming links", example: "https://sakananime.vercel.app/anime/episode/one-piece-episode-1" },
+  { method: "GET", path: "/anime/detail/{slug}", description: "Get anime detail by slug", example: "/anime/detail/one-piece" },
+  { method: "GET", path: "/anime/episode/{slug}", description: "Get episode streaming links", example: "/anime/episode/one-piece-episode-1" },
   { method: "GET", path: "/anime/ongoing", description: "Get ongoing anime list" },
   { method: "GET", path: "/anime/completed", description: "Get completed anime list" },
   { method: "GET", path: "/anime/schedule", description: "Get anime schedule" },
-  { method: "GET", path: "/anime/search?q=${keyword}", description: "Search anime", example: "https://sakananime.vercel.app/anime/search?q=naruto" },
+  { method: "GET", path: "/anime/search?q=${keyword}", description: "Search anime", example: "/anime/search?q=naruto" },
   { method: "GET", path: "/anime/genres", description: "Get all anime genres" },
-  { method: "GET", path: "/aanime/genre/${slug}", description: "Get anime by genre", example: "https://sakananime.vercel.app/anime/genre/action" },
+  { method: "GET", path: "/aanime/genre/${slug}", description: "Get anime by genre", example: "/anime/genre/action" },
 ];
 
 const comicEndpoints: EndpointInfo[] = [
   { method: "GET", path: "/comic", description: "Get home/featured comics" },
-  { method: "GET", path: "/comic/type/{type}", description: "Get comics by type (manga, manhwa, manhua)", example: "https://sakananime.vercel.app/comic/type/manga" },
+  { method: "GET", path: "/comic/type/{type}", description: "Get comics by type (manga, manhwa, manhua)", example: "/comic/type/manga" },
   { method: "GET", path: "/comic/genres", description: "Get all comic genres" },
-  { method: "GET", path: "/comic/genre/{slug}", description: "Get comics by genre", example: "https://sakananime.vercel.app/comic/genre/action" },
-  { method: "GET", path: "/detail/{slug}", description: "Get comic detail by slug", example: "https://akananime.vercel.app/detail/one-piece" },
-  { method: "GET", path: "/comic/chapter/{slug}", description: "Get chapter images", example: "https://sakananime.vercel.app/comic/chapter/one-piece-chapter-1" },
-  { method: "GET", path: "/comic/search?q={keyword}", description: "Search comics", example: "https://sakananime.vercel.app/comic/search?q=solo" },
+  { method: "GET", path: "/comic/genre/{slug}", description: "Get comics by genre", example: "/comic/genre/action" },
+  { method: "GET", path: "/detail/{slug}", description: "Get comic detail by slug", example: "/comic/detail/one-piece" },
+  { method: "GET", path: "/comic/chapter/{slug}", description: "Get chapter images", example: "/comic/chapter/one-piece-chapter-1" },
+  { method: "GET", path: "/comic/search?q={keyword}", description: "Search comics", example: "/comic/search?q=solo" },
 ];
 
 const novelEndpoints: EndpointInfo[] = [
