@@ -27,16 +27,20 @@ const DramaBoxWatch = () => {
       // Try to refresh auth first if we've had failures
       if (retryCount > 0) {
         try {
-          await dramaboxApi.refreshAuth();
+          console.log('Refreshing DramaBox auth...');
+          const authResult = await dramaboxApi.refreshAuth();
+          console.log('Auth refresh result:', authResult);
         } catch (e) {
-          console.log('Auth refresh failed, continuing anyway');
+          console.log('Auth refresh failed, continuing anyway:', e);
         }
       }
-      return dramaboxApi.getStream(bookId!, episodeNum);
+      const result = await dramaboxApi.getStream(bookId!, episodeNum);
+      console.log('Stream API result:', result);
+      return result;
     },
     enabled: !!bookId && !!episodeNum,
-    retry: 2,
-    retryDelay: 1000,
+    retry: 3,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
   });
 
   // Add to watch history when episode loads

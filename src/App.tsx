@@ -101,12 +101,14 @@ import Library from "./pages/Library";
 // Auth page
 import Auth from "./pages/Auth";
 import Account from "./pages/Account";
+import Admin from "./pages/Admin";
 import Install from "./pages/Install";
 
 // Doc, API and AI pages
 import Doc from "./pages/Doc";
 import SakanaAI from "./pages/SakanaAI";
 import Api from "./pages/Api";
+import Request from "./pages/Request";
 
 const queryClient = new QueryClient();
 
@@ -207,6 +209,7 @@ const App = () => {
                 <Route path="/novel/detail/:slug" element={<NovelDetail />} />
                 <Route path="/novel/meionovel/detail/:slug" element={<NovelDetail />} />
                 <Route path="/novel/chapter/:novelSlug/:chapterSlug" element={<NovelChapter />} />
+                <Route path="/novel/read/:slug" element={<NovelChapter />} />
                 <Route path="/novel/read/:novelSlug/:chapterSlug" element={<NovelChapter />} />
                 <Route path="/novel/read/:novelSlug/:extra/:chapterSlug" element={<NovelChapter />} />
                 <Route path="/novel/meionovel/chapter/:slug" element={<NovelChapter />} />
@@ -222,6 +225,10 @@ const App = () => {
                 {/* Auth Route */}
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/account" element={<Account />} />
+                <Route path="/account/admin" element={<Admin />} />
+                <Route path="/acc" element={<Account />} />
+                <Route path="/acc/admin" element={<Admin />} />
+                <Route path="/request" element={<Request />} />
 
 {/* TV Show Routes */}
                 <Route path="/tvshow" element={<TvShowHome />} />

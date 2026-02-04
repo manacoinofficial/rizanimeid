@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, X, Library, Tags, Clock, CheckCircle, User, LogIn, LogOut, Trophy, Tv, Play, BookOpen, Newspaper, Clapperboard, Download, BookMarked, FileText, Sparkles } from 'lucide-react';
+import { Search, Menu, X, Library, Tags, Clock, CheckCircle, User, LogIn, LogOut, Trophy, Tv, Play, BookOpen, Newspaper, Clapperboard, Download, BookMarked, FileText, Sparkles, Send, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/hooks/useAuth';
@@ -37,8 +37,10 @@ export const Navbar = () => {
     { to: '/dramabox', label: 'DramaChina', icon: Clapperboard },
     { to: '/install', label: 'Aplikasi', icon: Download },
     { to: '/tvshow', label: 'TV Show', icon: Tv },
-    { to: '/doc', label: 'doc', icon: FileText },
+    { to: '/doc', label: 'Doc', icon: FileText },
     { to: '/sakanaai', label: 'SakanaAI', icon: Sparkles },
+    { to: '/api', label: 'API', icon: Code },
+    { to: '/request', label: 'Request', icon: Send },
   ];
 
   const browseLinks = [
