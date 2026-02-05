@@ -1,4 +1,4 @@
-import { useState } from "react";
+ import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLevel, getXpForLevel } from "@/hooks/useLevel";
 import { useReadingHistory } from "@/hooks/useReadingHistory";
@@ -29,7 +29,8 @@ import {
   X,
   Shield,
   MessageSquare,
-  Tag
+   Tag,
+   Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -60,14 +61,14 @@ const AVAILABLE_GENRES = [
 ];
 
 const Account = () => {
-  const { user, isAuthenticated, logout } = useAuth();
+   const { user, isAuthenticated, isAdmin, isLoading, logout, userRole } = useAuth();
   const { levelData, getProgress, XP_REWARDS } = useLevel();
   const { history } = useReadingHistory();
   const { favorites } = useFavorites();
   
   // Profile editing state
   const [isEditing, setIsEditing] = useState(false);
-  const [displayName, setDisplayName] = useState(user?.name || "");
+   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [selectedGenres, setSelectedGenres] = useState<string[]>(["Action", "Fantasy", "Isekai"]);
   const [newComment, setNewComment] = useState("");
@@ -78,6 +79,30 @@ const Account = () => {
     { id: 2, content: "Great collection of anime!", date: "2024-01-10", likes: 3 },
   ]);
 
+   // Load saved profile data
+   useEffect(() => {
+     const saved = localStorage.getItem("userProfile");
+     if (saved) {
+       try {
+         const profile = JSON.parse(saved);
+         setDisplayName(profile.displayName || "");
+         setBio(profile.bio || "");
+         setSelectedGenres(profile.selectedGenres || ["Action", "Fantasy", "Isekai"]);
+       } catch (e) {
+         console.error("Failed to load profile:", e);
+       }
+     }
+   }, []);
+ 
+   // Show loading while checking auth
+   if (isLoading) {
+     return (
+       <div className="min-h-screen flex items-center justify-center">
+         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+       </div>
+     );
+   }
+ 
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
   }
@@ -96,8 +121,7 @@ const Account = () => {
   ];
 
   const handleSaveProfile = () => {
-    // Save to localStorage for now
-    localStorage.setItem("userProfile", JSON.stringify({
+     localStorage.setItem("userProfile", JSON.stringify({
       displayName,
       bio,
       selectedGenres
@@ -120,6 +144,13 @@ const Account = () => {
     setNewComment("");
   };
 
+   const getUserDisplayName = () => {
+     if (displayName) return displayName;
+     if (user?.user_metadata?.full_name) return user.user_metadata.full_name;
+     if (user?.email) return user.email.split('@')[0];
+     return "User";
+   };
+ 
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
@@ -129,12 +160,14 @@ const Account = () => {
             <h1 className="text-3xl font-bold text-foreground mb-2">My Account</h1>
             <p className="text-muted-foreground">Track your progress and achievements</p>
           </div>
-          <Link to="/account/admin">
-            <Button variant="outline" className="gap-2">
-              <Shield className="w-4 h-4" />
-              Admin Panel
-            </Button>
-          </Link>
+         {isAdmin && (
+           <Link to="/account/admin">
+             <Button variant="outline" className="gap-2">
+               <Shield className="w-4 h-4" />
+               Admin Panel
+             </Button>
+           </Link>
+         )}
         </div>
 
         <Tabs defaultValue="profile" className="space-y-6">
@@ -163,9 +196,17 @@ const Account = () => {
                       placeholder="Display Name"
                     />
                   ) : (
-                    <CardTitle className="text-xl">{displayName || user?.name || "User"}</CardTitle>
+                     <CardTitle className="text-xl">{getUserDisplayName()}</CardTitle>
                   )}
                   <p className="text-sm text-muted-foreground">{user?.email}</p>
+                   
+                   {/* Role Badge */}
+                   <div className="flex justify-center gap-2 mt-2">
+                     <Badge variant={isAdmin ? "default" : "secondary"}>
+                       {isAdmin && <Shield className="w-3 h-3 mr-1" />}
+                       {userRole || 'user'}
+                     </Badge>
+                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {/* Bio Section */}

@@ -1,11 +1,12 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+ import { useState, useEffect } from "react";
+ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+ import { useAuth } from "@/hooks/useAuth";
 import { Eye, EyeOff, Mail, Lock, User, Loader2 } from "lucide-react";
 
 const Auth = () => {
@@ -13,6 +14,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+   const { signIn, signUp, isAuthenticated, isLoading: authLoading } = useAuth();
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState("");
@@ -24,36 +26,37 @@ const Auth = () => {
   const [registerPassword, setRegisterPassword] = useState("");
   const [registerConfirmPassword, setRegisterConfirmPassword] = useState("");
 
+   // Redirect if already authenticated
+   useEffect(() => {
+     if (isAuthenticated && !authLoading) {
+       navigate("/account");
+     }
+   }, [isAuthenticated, authLoading, navigate]);
+ 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // TODO: Integrate with Supabase auth
-      // For now, simulate login with localStorage
-      if (loginEmail && loginPassword) {
-        const users = JSON.parse(localStorage.getItem("users") || "[]");
-        const user = users.find((u: any) => u.email === loginEmail && u.password === loginPassword);
-        
-        if (user) {
-          localStorage.setItem("currentUser", JSON.stringify({ email: user.email, name: user.name }));
-          toast({
-            title: "Login Successful",
-            description: `Welcome back, ${user.name}!`,
-          });
-          navigate("/");
-        } else {
-          toast({
-            title: "Login Failed",
-            description: "Invalid email or password",
-            variant: "destructive",
-          });
-        }
+       const { data, error } = await signIn(loginEmail, loginPassword);
+       
+       if (error) {
+         toast({
+           title: "Login Failed",
+           description: error.message,
+           variant: "destructive",
+         });
+       } else if (data.user) {
+         toast({
+           title: "Login Successful",
+           description: `Welcome back!`,
+         });
+         navigate("/account");
       }
-    } catch (error) {
+     } catch (error: any) {
       toast({
         title: "Error",
-        description: "An error occurred during login",
+         description: error.message || "An error occurred during login",
         variant: "destructive",
       });
     } finally {
@@ -86,42 +89,24 @@ const Auth = () => {
         return;
       }
 
-      // TODO: Integrate with Supabase auth
-      // For now, simulate registration with localStorage
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const existingUser = users.find((u: any) => u.email === registerEmail);
-
-      if (existingUser) {
+       const { data, error } = await signUp(registerEmail, registerPassword, registerName);
+       
+       if (error) {
         toast({
-          title: "Error",
-          description: "User with this email already exists",
+           title: "Registration Failed",
+           description: error.message,
           variant: "destructive",
         });
-        setIsLoading(false);
-        return;
+       } else if (data.user) {
+         toast({
+           title: "Registration Successful",
+           description: "Please check your email to verify your account.",
+         });
       }
-
-      const newUser = {
-        id: Date.now().toString(),
-        name: registerName,
-        email: registerEmail,
-        password: registerPassword,
-        createdAt: new Date().toISOString(),
-      };
-
-      users.push(newUser);
-      localStorage.setItem("users", JSON.stringify(users));
-      localStorage.setItem("currentUser", JSON.stringify({ email: newUser.email, name: newUser.name }));
-
-      toast({
-        title: "Registration Successful",
-        description: `Welcome, ${registerName}!`,
-      });
-      navigate("/");
-    } catch (error) {
+     } catch (error: any) {
       toast({
         title: "Error",
-        description: "An error occurred during registration",
+         description: error.message || "An error occurred during registration",
         variant: "destructive",
       });
     } finally {
