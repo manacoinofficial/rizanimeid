@@ -18,6 +18,7 @@ const models = [
   { id: 'liquid/lfm-2.5-1.2b-thinking:free', name: 'LFM Thinking' },
   { id: 'arcee-ai/trinity-mini:free', name: 'Sakananime Mini' },
   { id: 'openrouter/free', name: 'Sakananime S1-Pro' },
+  { id: 'stepfun/step-3.5-flash:free', name: ' step-3.5-flash' },
 ];
 
 const SakanaAI = () => {
