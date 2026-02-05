@@ -17,6 +17,7 @@ const models = [
   { id: 'arcee-ai/trinity-large-preview:free', name: 'Trinity Large' },
   { id: 'liquid/lfm-2.5-1.2b-thinking:free', name: 'LFM Thinking' },
   { id: 'arcee-ai/trinity-mini:free', name: 'Sakananime Mini' },
+  { id: 'openrouter/free', name: 'Sakananime S1-Pro' },
 ];
 
 const SakanaAI = () => {
