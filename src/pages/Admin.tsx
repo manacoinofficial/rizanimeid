@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { Navigate, Link } from "react-router-dom";
+ import { Navigate, Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,10 +14,10 @@ import {
   Search,
   Plus,
   Settings,
-  Users,
-  BarChart3,
   RefreshCw,
-  ArrowLeft
+   ArrowLeft,
+   Shield,
+   Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -135,13 +135,51 @@ const ContentPanel = ({
 };
 
 const Admin = () => {
-  const { user, isAuthenticated } = useAuth();
+   const { user, isAuthenticated, isAdmin, isLoading } = useAuth();
   const [isRefreshing, setIsRefreshing] = useState(false);
 
+   // Show loading while checking auth
+   if (isLoading) {
+     return (
+       <div className="min-h-screen flex items-center justify-center">
+         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+       </div>
+     );
+   }
+ 
+   // Redirect if not authenticated
   if (!isAuthenticated) {
     return <Navigate to="/auth" replace />;
   }
 
+   // Show access denied if not admin
+   if (!isAdmin) {
+     return (
+       <div className="min-h-screen flex items-center justify-center p-4">
+         <Card className="max-w-md w-full bg-card/50 backdrop-blur border-border/50">
+           <CardHeader className="text-center">
+             <div className="mx-auto w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4">
+               <Shield className="w-8 h-8 text-destructive" />
+             </div>
+             <CardTitle className="text-xl">Access Denied</CardTitle>
+           </CardHeader>
+           <CardContent className="text-center space-y-4">
+             <p className="text-muted-foreground">
+               You don't have permission to access the admin panel.
+               Only administrators can access this page.
+             </p>
+             <Link to="/account">
+               <Button variant="outline" className="w-full">
+                 <ArrowLeft className="w-4 h-4 mr-2" />
+                 Back to Account
+               </Button>
+             </Link>
+           </CardContent>
+         </Card>
+       </div>
+     );
+   }
+ 
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -169,6 +207,10 @@ const Admin = () => {
                   Back
                 </Button>
               </Link>
+               <Badge className="bg-primary/20 text-primary">
+                 <Shield className="w-3 h-3 mr-1" />
+                 Admin
+               </Badge>
             </div>
             <h1 className="text-3xl font-bold text-foreground">Admin Panel</h1>
             <p className="text-muted-foreground">Manage content across the platform</p>

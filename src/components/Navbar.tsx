@@ -106,7 +106,7 @@ export const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="default" size="sm" className="gap-2 bg-gradient-primary hover:opacity-90 transition-opacity border-0 shadow-lg">
                     <User className="h-4 w-4" />
-                    <span className="hidden lg:inline">{user?.name?.split(' ')[0] || 'User'}</span>
+                     <span className="hidden lg:inline">{user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'User'}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
@@ -212,7 +212,7 @@ export const Navbar = () => {
                   className="flex items-center justify-center gap-2 w-full py-3 text-sm font-medium bg-destructive text-destructive-foreground rounded-lg"
                 >
                   <LogOut className="h-4 w-4" />
-                  Sign Out ({user?.name?.split(' ')[0]})
+                   Sign Out ({user?.user_metadata?.full_name?.split(' ')[0] || user?.email?.split('@')[0]})
                 </button>
               </div>
             ) : (
