@@ -104,6 +104,10 @@ import Account from "./pages/Account";
 import Admin from "./pages/Admin";
 import Install from "./pages/Install";
 
+// Profile pages
+import UserProfile from "./pages/profil/UserProfile";
+import AdminProfile from "./pages/profil/AdminProfile";
+
 // Doc, API and AI pages
 import Doc from "./pages/Doc";
 import SakanaAI from "./pages/SakanaAI";
@@ -228,6 +232,8 @@ const App = () => {
                 <Route path="/account/admin" element={<Admin />} />
                 <Route path="/acc" element={<Account />} />
                 <Route path="/acc/admin" element={<Admin />} />
+                <Route path="/profil/user" element={<UserProfile />} />
+                <Route path="/profil/admin" element={<AdminProfile />} />
                 <Route path="/request" element={<Request />} />
 
 {/* TV Show Routes */}

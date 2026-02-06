@@ -29,7 +29,7 @@ const Auth = () => {
    // Redirect if already authenticated
    useEffect(() => {
      if (isAuthenticated && !authLoading) {
-       navigate("/account");
+       navigate("/profil/user");
      }
    }, [isAuthenticated, authLoading, navigate]);
  
@@ -46,12 +46,12 @@ const Auth = () => {
            description: error.message,
            variant: "destructive",
          });
-       } else if (data.user) {
-         toast({
-           title: "Login Successful",
-           description: `Welcome back!`,
-         });
-         navigate("/account");
+        } else if (data.user) {
+          toast({
+            title: "Login Successful",
+            description: `Welcome back!`,
+          });
+          navigate("/profil/user");
       }
      } catch (error: any) {
       toast({
@@ -100,8 +100,9 @@ const Auth = () => {
        } else if (data.user) {
          toast({
            title: "Registration Successful",
-           description: "Please check your email to verify your account.",
+           description: "Welcome! You are now logged in.",
          });
+         navigate("/profil/user");
       }
      } catch (error: any) {
       toast({
