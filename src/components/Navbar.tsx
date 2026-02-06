@@ -110,10 +110,10 @@ export const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-48">
-                  <Link to="/account">
+                  <Link to="/profil/user">
                     <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
                       <Trophy className="h-4 w-4 text-amber-400" />
-                      <span>My Account</span>
+                      <span>My Profile</span>
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuItem className="flex items-center gap-2">
@@ -197,12 +197,12 @@ export const Navbar = () => {
             {isAuthenticated ? (
               <div className="space-y-2">
                 <Link
-                  to="/account"
+                  to="/profil/user"
                   className="flex items-center justify-center gap-2 w-full py-3 text-sm font-medium bg-gradient-primary text-white rounded-lg"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <Trophy className="h-4 w-4" />
-                  My Account
+                  My Profile
                 </Link>
                 <button
                   onClick={() => {
