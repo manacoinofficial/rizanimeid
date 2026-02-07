@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Star, BookOpen, User, Palette, Calendar, Clock, Heart } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useReadingHistory } from '@/hooks/useReadingHistory';
+import { Comments } from '@/components/Comments';
 
 const ComicDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -195,6 +196,9 @@ const ComicDetail = () => {
             </ScrollArea>
           </CardContent>
         </Card>
+
+        {/* Comments Section */}
+        <Comments contentType="comic" contentSlug={slug!} />
       </div>
     </div>
   );

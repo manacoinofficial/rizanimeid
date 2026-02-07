@@ -4,7 +4,7 @@ import { Play, Calendar, Clock, Star } from 'lucide-react';
 import { api, DonghuaDetail, Episode } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
-
+import { Comments } from '@/components/Comments';
 export default function Detail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -267,6 +267,9 @@ export default function Detail() {
             </div>
           </div>
         )}
+
+        {/* Comments Section */}
+        <Comments contentType="donghua" contentSlug={slug!} />
       </div>
     </div>
   );
