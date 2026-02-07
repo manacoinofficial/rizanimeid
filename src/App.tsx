@@ -97,16 +97,7 @@ import DramaBoxWatch from "./pages/dramabox/DramaBoxWatch";
 
 // Library page
 import Library from "./pages/Library";
-
-// Auth page
-import Auth from "./pages/Auth";
-import Account from "./pages/Account";
-import Admin from "./pages/Admin";
 import Install from "./pages/Install";
-
-// Profile pages
-import UserProfile from "./pages/profil/UserProfile";
-import AdminProfile from "./pages/profil/AdminProfile";
 
 // Doc, API and AI pages
 import Doc from "./pages/Doc";
@@ -117,26 +108,6 @@ import Request from "./pages/Request";
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Auto dark mode based on system preference
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e: MediaQueryListEvent) => {
-      if (e.matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    };
-
-    // Set initial theme
-    if (mediaQuery.matches) {
-      document.documentElement.classList.add('dark');
-    }
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
@@ -226,17 +197,10 @@ const App = () => {
                 <Route path="/browse/ongoing" element={<UnifiedOngoing />} />
                 <Route path="/browse/completed" element={<UnifiedCompleted />} />
 
-                {/* Auth Route */}
-                <Route path="/auth" element={<Auth />} />
-                <Route path="/account" element={<Account />} />
-                <Route path="/account/admin" element={<Admin />} />
-                <Route path="/acc" element={<Account />} />
-                <Route path="/acc/admin" element={<Admin />} />
-                <Route path="/profil/user" element={<UserProfile />} />
-                <Route path="/profil/admin" element={<AdminProfile />} />
+                {/* Request Route */}
                 <Route path="/request" element={<Request />} />
 
-{/* TV Show Routes */}
+                {/* TV Show Routes */}
                 <Route path="/tvshow" element={<TvShowHome />} />
                 <Route path="/tvshow/film/:id" element={<TvShowDetail type="film" />} />
                 <Route path="/tvshow/series/:id" element={<TvShowDetail type="series" />} />
@@ -258,7 +222,7 @@ const App = () => {
                 {/* Install PWA Route */}
                 <Route path="/install" element={<Install />} />
 
-{/* Doc, API and AI Routes */}
+                {/* Doc, API and AI Routes */}
                 <Route path="/doc" element={<Doc />} />
                 <Route path="/sakanaai" element={<SakanaAI />} />
                 <Route path="/api" element={<Api />} />

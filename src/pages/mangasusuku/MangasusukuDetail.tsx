@@ -9,6 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Heart, BookOpen, Star, User, Palette, History } from 'lucide-react';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useReadingHistory } from '@/hooks/useReadingHistory';
+import { Comments } from '@/components/Comments';
 
 const MangasusukuDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -198,6 +199,9 @@ const MangasusukuDetail = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Comments Section */}
+        <Comments contentType="mangasusuku" contentSlug={slug!} />
       </div>
     </div>
   );

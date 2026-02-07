@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Play, Star, Calendar, Tv } from 'lucide-react';
+import { Comments } from '@/components/Comments';
 
 interface TvShowDetailProps {
   type: 'film' | 'series';
@@ -164,6 +165,9 @@ const TvShowDetail = ({ type }: TvShowDetailProps) => {
                   </CardContent>
                 </Card>
               )}
+
+              {/* Comments Section */}
+              <Comments contentType="tvshow" contentSlug={id!} />
             </div>
           </div>
         </div>

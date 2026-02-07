@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { LoadingSkeleton } from '@/components/LoadingSkeleton';
 import { useFavorites } from '@/hooks/useFavorites';
 import { useReadingHistory } from '@/hooks/useReadingHistory';
+import { Comments } from '@/components/Comments';
 
 export default function AnimeDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -326,6 +327,9 @@ export default function AnimeDetail() {
             </div>
           </div>
         )}
+
+        {/* Comments Section */}
+        <Comments contentType="anime" contentSlug={slug!} />
       </div>
     </div>
   );

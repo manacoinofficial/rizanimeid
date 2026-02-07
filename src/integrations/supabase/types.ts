@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      comments: {
+        Row: {
+          content: string
+          content_slug: string
+          content_type: string
+          created_at: string
+          github_avatar: string | null
+          github_username: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          content_slug: string
+          content_type: string
+          created_at?: string
+          github_avatar?: string | null
+          github_username: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          content_slug?: string
+          content_type?: string
+          created_at?: string
+          github_avatar?: string | null
+          github_username?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

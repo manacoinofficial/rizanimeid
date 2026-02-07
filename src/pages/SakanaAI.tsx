@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Loader2, Sparkles, Image as ImageIcon, RefreshCw } from 'lucide-react';
+import { Send, Bot, User, Loader2, Sparkles, Image as ImageIcon, RefreshCw, Upload, X, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -13,21 +13,14 @@ interface Message {
   image?: string;
 }
 
-const models = [
-  { id: 'arcee-ai/trinity-large-preview:free', name: 'Trinity Large' },
-  { id: 'liquid/lfm-2.5-1.2b-thinking:free', name: 'LFM Thinking' },
-  { id: 'arcee-ai/trinity-mini:free', name: 'Sakananime Mini' },
-  { id: 'openrouter/free', name: 'Sakananime S1-Pro' },
-  { id: 'stepfun/step-3.5-flash:free', name: 'step-3.5-flash' },
-  { id: 'z-ai/glm-4.5-air:free', name: 'GLM-4.5' },
-];
-
 const SakanaAI = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState(models[0].id);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -35,12 +28,34 @@ const SakanaAI = () => {
     }
   }, [messages]);
 
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: 'Gambar terlalu besar', description: 'Maksimal 5MB', variant: 'destructive' });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setUploadedImage(reader.result as string);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const sendMessage = async () => {
+    if ((!input.trim() && !uploadedImage) || isLoading) return;
+
+    const userMessage: Message = { 
+      role: 'user', 
+      content: input || (uploadedImage ? 'Analyze this image' : ''),
+      image: uploadedImage || undefined,
+    };
+    
     setMessages(prev => [...prev, userMessage]);
     setInput('');
+    setUploadedImage(null);
     setIsLoading(true);
 
     try {
@@ -49,8 +64,8 @@ const SakanaAI = () => {
           messages: [...messages, userMessage].map(m => ({
             role: m.role,
             content: m.content,
+            image: m.image,
           })),
-          model: selectedModel,
         },
       });
 
@@ -58,18 +73,23 @@ const SakanaAI = () => {
 
       const assistantMessage: Message = {
         role: 'assistant',
-        content: data.content || 'Sorry, I could not generate a response.',
+        content: data.content || 'Maaf, tidak ada respon.',
         image: data.image,
       };
 
       setMessages(prev => [...prev, assistantMessage]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
+      toast({ 
+        title: 'Error', 
+        description: error.message || 'Gagal mengirim pesan',
+        variant: 'destructive' 
+      });
       setMessages(prev => [
         ...prev,
         {
           role: 'assistant',
-          content: 'Sorry, there was an error processing your request. Please try again.',
+          content: 'Maaf, terjadi error. Silakan coba lagi.',
         },
       ]);
     } finally {
@@ -86,6 +106,7 @@ const SakanaAI = () => {
 
   const clearChat = () => {
     setMessages([]);
+    setUploadedImage(null);
   };
 
   return (
@@ -99,24 +120,12 @@ const SakanaAI = () => {
         </div>
         <h1 className="text-4xl font-bold text-gradient mb-2">Sakana AI</h1>
         <p className="text-muted-foreground">
-          Chat with AI powered by Sakana AI- Generate text and images!
+          Chat dengan AI - Generate gambar, scan foto, identifikasi anime!
         </p>
       </div>
 
-      {/* Model Selector */}
-      <div className="flex items-center justify-between mb-4 gap-4">
-        <Select value={selectedModel} onValueChange={setSelectedModel}>
-          <SelectTrigger className="w-[280px]">
-            <SelectValue placeholder="Select model" />
-          </SelectTrigger>
-          <SelectContent>
-            {models.map(model => (
-              <SelectItem key={model.id} value={model.id}>
-                {model.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      {/* Actions */}
+      <div className="flex items-center justify-end mb-4">
         <Button variant="outline" size="sm" onClick={clearChat} className="gap-2">
           <RefreshCw className="h-4 w-4" />
           Clear Chat
@@ -136,10 +145,12 @@ const SakanaAI = () => {
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 <Bot className="h-12 w-12 mb-4 opacity-50" />
-                <p>Start a conversation with Sakana AI!</p>
-                <p className="text-sm mt-2">
-                  Ask anything or request image generation.
-                </p>
+                <p className="font-medium">Mulai percakapan dengan Sakana AI!</p>
+                <div className="mt-4 space-y-2 text-sm">
+                  <p>🎨 "Generate gambar anime sunset"</p>
+                  <p>📸 Upload foto untuk scan/identifikasi</p>
+                  <p>💬 Tanya rekomendasi anime/manga</p>
+                </div>
               </div>
             ) : (
               <div className="space-y-4">
@@ -159,11 +170,20 @@ const SakanaAI = () => {
                       className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                         message.role === 'user'
                           ? 'bg-gradient-primary text-white'
-                          : 'bg-secondary'
+                          : 'bg-secondary text-foreground'
                       }`}
                     >
+                      {message.image && message.role === 'user' && (
+                        <div className="mb-2">
+                          <img
+                            src={message.image}
+                            alt="Uploaded"
+                            className="rounded-lg max-w-full max-h-48 object-cover"
+                          />
+                        </div>
+                      )}
                       <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                      {message.image && (
+                      {message.image && message.role === 'assistant' && (
                         <div className="mt-3">
                           <img
                             src={message.image}
@@ -196,19 +216,54 @@ const SakanaAI = () => {
         </CardContent>
       </Card>
 
+      {/* Image Preview */}
+      {uploadedImage && (
+        <div className="mb-4 relative inline-block">
+          <img
+            src={uploadedImage}
+            alt="Upload preview"
+            className="h-20 w-20 object-cover rounded-lg border-2 border-primary"
+          />
+          <Button
+            variant="destructive"
+            size="icon"
+            className="absolute -top-2 -right-2 h-6 w-6"
+            onClick={() => setUploadedImage(null)}
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        </div>
+      )}
+
       {/* Input Area */}
       <div className="flex gap-2">
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={handleImageUpload}
+          className="hidden"
+        />
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isLoading}
+          title="Upload gambar"
+        >
+          <Camera className="h-4 w-4" />
+        </Button>
         <Input
           value={input}
           onChange={e => setInput(e.target.value)}
           onKeyPress={handleKeyPress}
-          placeholder="Type your message..."
+          placeholder="Ketik pesan atau upload gambar..."
           disabled={isLoading}
           className="flex-1"
         />
         <Button
           onClick={sendMessage}
-          disabled={!input.trim() || isLoading}
+          disabled={(!input.trim() && !uploadedImage) || isLoading}
           className="bg-gradient-primary hover:opacity-90 gap-2"
         >
           {isLoading ? (
@@ -224,23 +279,23 @@ const SakanaAI = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
         <Card className="hover-lift">
           <CardContent className="p-4 text-center">
-            <Bot className="h-8 w-8 mx-auto mb-2 text-primary" />
-            <h3 className="font-semibold text-sm">Multi-Model</h3>
-            <p className="text-xs text-muted-foreground">Choose from 3 free AI models</p>
+            <Camera className="h-8 w-8 mx-auto mb-2 text-primary" />
+            <h3 className="font-semibold text-sm">Scan Gambar</h3>
+            <p className="text-xs text-muted-foreground">Identifikasi anime/karakter dari foto</p>
           </CardContent>
         </Card>
         <Card className="hover-lift">
           <CardContent className="p-4 text-center">
             <ImageIcon className="h-8 w-8 mx-auto mb-2 text-primary" />
-            <h3 className="font-semibold text-sm">Image Generation</h3>
-            <p className="text-xs text-muted-foreground">Generate images with AI</p>
+            <h3 className="font-semibold text-sm">Generate Gambar</h3>
+            <p className="text-xs text-muted-foreground">Buat gambar dengan AI</p>
           </CardContent>
         </Card>
         <Card className="hover-lift">
           <CardContent className="p-4 text-center">
             <Sparkles className="h-8 w-8 mx-auto mb-2 text-primary" />
-            <h3 className="font-semibold text-sm">Free to Use</h3>
-            <p className="text-xs text-muted-foreground">Powered by Sakananime Apis</p>
+            <h3 className="font-semibold text-sm">Chat Pintar</h3>
+            <p className="text-xs text-muted-foreground">Tanya apa saja tentang anime</p>
           </CardContent>
         </Card>
       </div>
