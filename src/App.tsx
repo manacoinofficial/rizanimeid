@@ -32,6 +32,13 @@ import AnimeAll from "./pages/anime/AnimeAll";
 import JDrama from "./pages/anime/JDrama";
 import LiveAction from "./pages/anime/LiveAction";
 import DramaDetail from "./pages/anime/DramaDetail";
+
+// English Anime pages
+import EnAnimeHome from "./pages/en/anime/EnAnimeHome";
+import EnAnimeList from "./pages/en/anime/EnAnimeList";
+import EnAnimeSearch from "./pages/en/anime/EnAnimeSearch";
+import EnAnimeDetail from "./pages/en/anime/EnAnimeDetail";
+import EnAnimeEpisode from "./pages/en/anime/EnAnimeEpisode";
 import LiveActionDetail from "./pages/anime/LiveActionDetail";
 
 // Comic pages
@@ -145,6 +152,13 @@ const App = () => {
                 <Route path="/anime/live-action" element={<LiveAction />} />
                 <Route path="/anime/drama/:slug" element={<DramaDetail />} />
                 <Route path="/anime/live-action/:slug" element={<LiveActionDetail />} />
+
+                {/* English Anime Routes */}
+                <Route path="/en/anime" element={<EnAnimeHome />} />
+                <Route path="/en/anime/list" element={<EnAnimeList />} />
+                <Route path="/en/anime/search" element={<EnAnimeSearch />} />
+                <Route path="/en/anime/detail/:id" element={<EnAnimeDetail />} />
+                <Route path="/en/anime/episode/:episodeId" element={<EnAnimeEpisode />} />
 
                 {/* Comic Routes */}
                 <Route path="/comic" element={<ComicHome />} />

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 
-export type ContentType = 'comic' | 'novel' | 'anime' | 'mangasusuku' | 'mangasusuku-chapter' | 'dramabox';
+export type ContentType = 'comic' | 'novel' | 'anime' | 'mangasusuku' | 'mangasusuku-chapter' | 'dramabox' | 'en-anime';
 
 export interface HistoryItem {
   type: ContentType;
