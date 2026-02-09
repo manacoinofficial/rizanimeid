@@ -1,3 +1,23 @@
+import { supabase } from '@/integrations/supabase/client';
+
+const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/aniwatch-proxy`;
+
+async function proxyFetch(path: string, params?: Record<string, string>) {
+  const url = new URL(FUNCTION_URL);
+  if (path) url.searchParams.set('path', path);
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
+  }
+  const { data: { session } } = await supabase.auth.getSession();
+  const response = await fetch(url.toString(), {
+    headers: {
+      'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+      ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : { 'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}` }),
+    },
+  });
+  return response.json();
+}
+
 const BASE_URL = 'https://api-anime-rouge.vercel.app/aniwatch';
 
 export interface AniwatchAnime {
@@ -96,18 +116,9 @@ export interface AniwatchSourceResponse {
       kind: string;
       default?: boolean;
     }[];
-    intro?: {
-      start: number;
-      end: number;
-    };
-    outro?: {
-      start: number;
-      end: number;
-    };
-    sources: {
-      url: string;
-      type: string;
-    }[];
+    intro?: { start: number; end: number };
+    outro?: { start: number; end: number };
+    sources: { url: string; type: string }[];
     anilistID?: number;
     malID?: number;
   };
@@ -122,31 +133,14 @@ export interface AniwatchAnimeInfo {
   stats?: {
     rating?: string;
     quality?: string;
-    episodes?: {
-      sub?: number;
-      dub?: number;
-    };
+    episodes?: { sub?: number; dub?: number };
     type?: string;
     duration?: string;
   };
-  promotionalVideos?: {
-    title?: string;
-    source?: string;
-    thumbnail?: string;
-  }[];
+  promotionalVideos?: { title?: string; source?: string; thumbnail?: string }[];
   charactersVoiceActors?: {
-    character: {
-      id: string;
-      poster: string;
-      name: string;
-      cast: string;
-    };
-    voiceActor: {
-      id: string;
-      poster: string;
-      name: string;
-      cast: string;
-    };
+    character: { id: string; poster: string; name: string; cast: string };
+    voiceActor: { id: string; poster: string; name: string; cast: string };
   }[];
   anime?: {
     info?: {
@@ -157,10 +151,7 @@ export interface AniwatchAnimeInfo {
       stats?: {
         rating?: string;
         quality?: string;
-        episodes?: {
-          sub?: number;
-          dub?: number;
-        };
+        episodes?: { sub?: number; dub?: number };
         type?: string;
         duration?: string;
       };
@@ -181,13 +172,7 @@ export interface AniwatchAnimeInfo {
   mostPopularAnimes?: AniwatchAnime[];
   relatedAnimes?: AniwatchAnime[];
   recommendedAnimes?: AniwatchAnime[];
-  seasons?: {
-    id: string;
-    name: string;
-    title?: string;
-    poster: string;
-    isCurrent: boolean;
-  }[];
+  seasons?: { id: string; name: string; title?: string; poster: string; isCurrent: boolean }[];
 }
 
 export interface AniwatchInfoResponse {
@@ -197,41 +182,34 @@ export interface AniwatchInfoResponse {
 
 export const aniwatchApi = {
   getHome: async (): Promise<AniwatchHomeResponse> => {
-    const response = await fetch(`${BASE_URL}`);
-    return response.json();
+    return proxyFetch('');
   },
 
   getAZList: async (page: number = 1): Promise<AniwatchListResponse> => {
-    const response = await fetch(`${BASE_URL}/az-list?page=${page}`);
-    return response.json();
+    return proxyFetch('az-list', { page: String(page) });
   },
 
   search: async (keyword: string, page: number = 1): Promise<AniwatchSearchResponse> => {
-    const response = await fetch(`${BASE_URL}/search?keyword=${encodeURIComponent(keyword)}&page=${page}`);
-    return response.json();
+    return proxyFetch('search', { keyword, page: String(page) });
   },
 
   getInfo: async (id: string): Promise<AniwatchInfoResponse> => {
-    const response = await fetch(`${BASE_URL}/info?id=${id}`);
-    return response.json();
+    return proxyFetch('info', { id });
   },
 
   getEpisodes: async (id: string): Promise<AniwatchEpisodesResponse> => {
-    const response = await fetch(`${BASE_URL}/episodes/${id}`);
-    return response.json();
+    return proxyFetch(`episodes/${id}`);
   },
 
   getServers: async (episodeId: string): Promise<AniwatchServersResponse> => {
-    const response = await fetch(`${BASE_URL}/servers?id=${episodeId}`);
-    return response.json();
+    return proxyFetch('servers', { id: episodeId });
   },
 
   getEpisodeSources: async (
-    episodeId: string, 
-    server: string = 'vidstreaming', 
+    episodeId: string,
+    server: string = 'vidstreaming',
     category: 'sub' | 'dub' = 'sub'
   ): Promise<AniwatchSourceResponse> => {
-    const response = await fetch(`${BASE_URL}/episode-srcs?id=${episodeId}&server=${server}&category=${category}`);
-    return response.json();
+    return proxyFetch('episode-srcs', { id: episodeId, server, category });
   },
 };
