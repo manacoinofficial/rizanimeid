@@ -1,14 +1,31 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, X, Library, Tags, Clock, CheckCircle, Tv, Play, BookOpen, Newspaper, Clapperboard, Download, BookMarked, FileText, Sparkles, Send, Code } from 'lucide-react';
+import { Search, Menu, X, Library, Tags, Clock, CheckCircle, Tv, Play, BookOpen, Newspaper, Clapperboard, Download, BookMarked, FileText, Sparkles, Send, Code, LogIn, LogOut, ShieldCheck, ChevronDown, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { useAuth } from '@/hooks/useAuth';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const { user, isAdmin, signOut } = useAuth();
+
+  const displayName =
+    (user?.user_metadata?.full_name as string | undefined) ||
+    user?.email?.split('@')[0] ||
+    'User';
+  const avatarUrl = (user?.user_metadata?.avatar_url as string | undefined) || undefined;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,20 +36,19 @@ export const Navbar = () => {
     }
   };
 
-  const navLinks = [
+  const primaryLinks = [
     { to: '/', label: 'Donghua', icon: Play },
     { to: '/anime', label: 'Anime', icon: Tv },
+    { to: '/tvshow', label: 'TV Show', icon: Tv },
+    { to: '/sakanaai', label: 'SakanaAI', icon: Sparkles },
+  ];
+
+  const readingLinks = [
     { to: '/comic', label: 'Comic', icon: BookOpen },
     { to: '/mangasusuku', label: 'Mangasusuku', icon: BookMarked },
     { to: '/novel', label: 'Novel', icon: BookOpen },
     { to: '/news', label: 'Berita', icon: Newspaper },
-    { to: '/dramabox', label: 'DramaChina', icon: Clapperboard },
-    { to: '/install', label: 'Aplikasi', icon: Download },
-    { to: '/tvshow', label: 'TV Show', icon: Tv },
-    { to: '/doc', label: 'Doc', icon: FileText },
-    { to: '/sakanaai', label: 'SakanaAI', icon: Sparkles },
-    { to: '/api', label: 'API', icon: Code },
-    { to: '/request', label: 'Request', icon: Send },
+    { to: '/dramabox', label: 'Drama China', icon: Clapperboard },
   ];
 
   const browseLinks = [
@@ -41,6 +57,16 @@ export const Navbar = () => {
     { to: '/browse/completed', label: 'Completed', icon: CheckCircle },
     { to: '/library', label: 'Library', icon: Library },
   ];
+
+  const moreLinks = [
+    { to: '/install', label: 'Aplikasi', icon: Download },
+    { to: '/doc', label: 'Dokumentasi', icon: FileText },
+    { to: '/api', label: 'API', icon: Code },
+    { to: '/request', label: 'Request', icon: Send },
+    { to: '/tentang', label: 'Tentang Kami', icon: Sparkles },
+  ];
+
+  const mobileAllLinks = [...primaryLinks, ...readingLinks, ...moreLinks];
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b glass">
@@ -58,47 +84,138 @@ export const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
+            {primaryLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors flex items-center gap-1.5"
+                className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-accent rounded-lg transition-colors flex items-center gap-1.5"
               >
                 <link.icon className="h-4 w-4" />
                 <span className="hidden xl:inline">{link.label}</span>
               </Link>
             ))}
-            <div className="w-px h-6 bg-border mx-2" />
-            {browseLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-lg transition-colors flex items-center gap-1.5"
-              >
-                <link.icon className="h-4 w-4" />
-                <span className="hidden xl:inline">{link.label}</span>
-              </Link>
-            ))}
+
+            <DropdownMenu>
+              <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-accent rounded-lg transition-colors flex items-center gap-1.5 focus:outline-none">
+                <BookOpen className="h-4 w-4" />
+                <span className="hidden xl:inline">Bacaan</span>
+                <ChevronDown className="h-3 w-3" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                {readingLinks.map((l) => (
+                  <DropdownMenuItem key={l.to} asChild>
+                    <Link to={l.to} className="cursor-pointer">
+                      <l.icon className="h-4 w-4 mr-2" />
+                      {l.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-accent rounded-lg transition-colors flex items-center gap-1.5 focus:outline-none">
+                <Tags className="h-4 w-4" />
+                <span className="hidden xl:inline">Jelajah</span>
+                <ChevronDown className="h-3 w-3" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                {browseLinks.map((l) => (
+                  <DropdownMenuItem key={l.to} asChild>
+                    <Link to={l.to} className="cursor-pointer">
+                      <l.icon className="h-4 w-4 mr-2" />
+                      {l.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-accent rounded-lg transition-colors flex items-center gap-1.5 focus:outline-none">
+                <span className="hidden xl:inline">Lainnya</span>
+                <ChevronDown className="h-3 w-3" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                {moreLinks.map((l) => (
+                  <DropdownMenuItem key={l.to} asChild>
+                    <Link to={l.to} className="cursor-pointer">
+                      <l.icon className="h-4 w-4 mr-2" />
+                      {l.label}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           {/* Search Bar & Actions - Desktop */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 type="text"
-                placeholder="Search..."
+                placeholder="Cari..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 lg:w-56 pl-9 bg-secondary/50 border-transparent focus:border-primary/50 focus:bg-background transition-all"
+                className="w-44 lg:w-56 pl-9 bg-secondary/50 border-transparent focus:border-primary/50 focus:bg-background transition-all"
               />
             </form>
             <ThemeToggle />
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger className="focus:outline-none">
+                  <Avatar className="h-9 w-9 border-2 border-primary/30 hover:border-primary transition-colors">
+                    {avatarUrl && <AvatarImage src={avatarUrl} />}
+                    <AvatarFallback>{displayName[0]?.toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuLabel>
+                    <div className="font-medium truncate">{displayName}</div>
+                    <div className="text-xs text-muted-foreground truncate">{user.email}</div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {isAdmin && (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin" className="cursor-pointer">
+                        <ShieldCheck className="h-4 w-4 mr-2" />
+                        Admin Panel
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuItem asChild>
+                    <Link to="/library" className="cursor-pointer">
+                      <Library className="h-4 w-4 mr-2" />
+                      Library
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={signOut} className="cursor-pointer">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild size="sm" className="gap-1.5">
+                <Link to="/auth">
+                  <LogIn className="h-4 w-4" />
+                  Login
+                </Link>
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-2 lg:hidden">
             <ThemeToggle />
+            {user ? (
+              <Avatar className="h-8 w-8 border-2 border-primary/30">
+                {avatarUrl && <AvatarImage src={avatarUrl} />}
+                <AvatarFallback className="text-xs">{displayName[0]?.toUpperCase()}</AvatarFallback>
+              </Avatar>
+            ) : null}
             <Button
               variant="ghost"
               size="icon"
@@ -129,13 +246,14 @@ export const Navbar = () => {
             </form>
 
             <div className="grid grid-cols-2 gap-2">
-              {navLinks.map((link) => (
+              {mobileAllLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="px-4 py-3 text-sm font-medium text-center bg-secondary/50 hover:bg-secondary rounded-lg transition-colors"
+                  className="px-3 py-2.5 text-sm font-medium bg-secondary/50 hover:bg-secondary text-foreground rounded-lg transition-colors flex items-center gap-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
+                  <link.icon className="h-4 w-4 text-muted-foreground" />
                   {link.label}
                 </Link>
               ))}
@@ -146,13 +264,45 @@ export const Navbar = () => {
                 <Link
                   key={link.to}
                   to={link.to}
-                  className="px-4 py-3 text-sm font-medium bg-accent/50 hover:bg-accent rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="px-3 py-2.5 text-sm font-medium bg-accent/50 hover:bg-accent text-foreground rounded-lg transition-colors flex items-center gap-2"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <link.icon className="h-4 w-4" />
                   {link.label}
                 </Link>
               ))}
+            </div>
+
+            <div className="pt-2 border-t">
+              {user ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 px-2 text-sm">
+                    <UserIcon className="h-4 w-4 text-muted-foreground" />
+                    <span className="font-medium truncate text-foreground">{displayName}</span>
+                  </div>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium bg-primary/10 text-primary rounded-lg"
+                    >
+                      <ShieldCheck className="h-4 w-4" />
+                      Admin Panel
+                    </Link>
+                  )}
+                  <Button variant="outline" size="sm" className="w-full gap-2" onClick={() => { signOut(); setMobileMenuOpen(false); }}>
+                    <LogOut className="h-4 w-4" />
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <Button asChild className="w-full gap-2" onClick={() => setMobileMenuOpen(false)}>
+                  <Link to="/auth">
+                    <LogIn className="h-4 w-4" />
+                    Login / Daftar
+                  </Link>
+                </Button>
+              )}
             </div>
           </div>
         )}

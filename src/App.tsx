@@ -16,6 +16,9 @@ import ByYear from "./pages/ByYear";
 import Detail from "./pages/Detail";
 import Episode from "./pages/Episode";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth";
+import Admin from "./pages/Admin";
+import Tentang from "./pages/Tentang";
 
 // Anime pages
 import AnimeHome from "./pages/anime/AnimeHome";
@@ -240,6 +243,14 @@ const App = () => {
                 <Route path="/doc" element={<Doc />} />
                 <Route path="/sakanaai" element={<SakanaAI />} />
                 <Route path="/api" element={<Api />} />
+
+                {/* Auth, Admin, About */}
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/login" element={<Navigate to="/auth" replace />} />
+                <Route path="/register" element={<Navigate to="/auth" replace />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/tentang" element={<Tentang />} />
+                <Route path="/about" element={<Navigate to="/tentang" replace />} />
 
                 {/* Novel sakuranovel chapter routes */}
                 <Route path="/novel/sakuranovel/chapter/:slug" element={<NovelChapter />} />
