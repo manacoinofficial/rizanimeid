@@ -16,34 +16,40 @@ export type Database = {
     Tables: {
       comments: {
         Row: {
+          avatar_url: string | null
           content: string
           content_slug: string
           content_type: string
           created_at: string
+          display_name: string | null
           github_avatar: string | null
-          github_username: string
+          github_username: string | null
           id: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          avatar_url?: string | null
           content: string
           content_slug: string
           content_type: string
           created_at?: string
+          display_name?: string | null
           github_avatar?: string | null
-          github_username: string
+          github_username?: string | null
           id?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          avatar_url?: string | null
           content?: string
           content_slug?: string
           content_type?: string
           created_at?: string
+          display_name?: string | null
           github_avatar?: string | null
-          github_username?: string
+          github_username?: string | null
           id?: string
           updated_at?: string
           user_id?: string
