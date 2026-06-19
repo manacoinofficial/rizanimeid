@@ -1,4 +1,4 @@
-const BASE_URL = 'https://www.sankavollerei.com';
+const BASE_URL = 'https://www.sankavollerei.web.id';
 
 export interface ComicCard {
   title: string;
