@@ -90,12 +90,6 @@ export const novelApi = {
     return response.json();
   },
 
-  // Alternative chapter endpoint using single slug
-  getChapterBySlug: async (slug: string) => {
-    const response = await fetch(`${BASE_URL}/novel/sakuranovel/read/${slug}`);
-    return response.json();
-  },
-
   search: async (keyword: string, page: number = 1) => {
     const response = await fetch(`${BASE_URL}/novel/sakuranovel/search?q=${encodeURIComponent(keyword)}`);
     return response.json();
