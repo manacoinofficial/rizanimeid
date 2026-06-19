@@ -1,4 +1,4 @@
-const BASE_URL = 'https://www.sankavollerei.com';
+const BASE_URL = 'https://www.sankavollerei.web.id';
 
 // Anime Types
 export interface Genre {
