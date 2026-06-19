@@ -31,28 +31,24 @@ export default function EnAnimeHome() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-indigo-600 to-purple-600 py-16 md:py-24">
-        <div className="container mx-auto px-4 text-center text-white">
-          <h1 className="text-4xl md:text-6xl font-bold mb-4 animate-fade-in">
+      <section className="relative bg-gradient-primary py-12 sm:py-16 md:py-24">
+        <div className="container mx-auto px-4 text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold mb-3 sm:mb-4 text-primary-foreground animate-fade-in">
             English Anime
           </h1>
-          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto animate-fade-in">
+          <p className="text-sm sm:text-lg md:text-xl text-primary-foreground/90 max-w-2xl mx-auto animate-fade-in">
             Watch anime with English subtitles and dubs
           </p>
+          <div className="flex flex-wrap gap-2 justify-center mt-6">
+            <Button asChild variant="secondary" size="sm">
+              <Link to="/en/anime/list">A-Z List</Link>
+            </Button>
+            <Button asChild variant="secondary" size="sm">
+              <Link to="/en/anime/search">Search</Link>
+            </Button>
+          </div>
         </div>
       </section>
-
-      {/* Quick Links */}
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex flex-wrap gap-2">
-          <Link to="/en/anime/list">
-            <Button variant="outline" size="sm">A-Z List</Button>
-          </Link>
-          <Link to="/en/anime/search">
-            <Button variant="outline" size="sm">Search</Button>
-          </Link>
-        </div>
-      </div>
 
       <div className="container mx-auto px-4 py-8 space-y-12">
         {/* Spotlight */}
