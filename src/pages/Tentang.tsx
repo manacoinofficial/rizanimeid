@@ -16,7 +16,7 @@ export default function Tentang() {
         <div className="inline-flex h-16 w-16 rounded-2xl bg-gradient-primary items-center justify-center shadow-lg mb-4">
           <Sparkles className="h-8 w-8 text-primary-foreground" />
         </div>
-        <h1 className="text-4xl font-bold text-gradient mb-3">Tentang Sakananime</h1>
+        <h1 className="text-4xl font-bold text-gradient mb-3">Tentang rizanime</h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Platform hiburan terlengkap untuk para penggemar anime, donghua, comic, dan novel di Indonesia — gratis, tanpa iklan mengganggu.
         </p>
@@ -47,7 +47,7 @@ export default function Tentang() {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Sakananime dijalankan secara mandiri. Setiap dukunganmu — sekecil apa pun — membantu kami menutupi biaya server, API, dan pengembangan fitur baru. Terima kasih sudah mempercayai kami!
+            rizanime dijalankan secara mandiri. Setiap dukunganmu — sekecil apa pun — membantu kami menutupi biaya server, API, dan pengembangan fitur baru. Terima kasih sudah mempercayai kami!
           </p>
           <Button asChild size="lg" className="w-full sm:w-auto gap-2">
             <a

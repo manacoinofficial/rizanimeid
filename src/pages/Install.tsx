@@ -69,7 +69,7 @@ const Install = () => {
               </div>
               <CardTitle className="text-2xl">App Terinstall!</CardTitle>
               <CardDescription>
-                sakanan!me sudah terinstall di perangkat kamu
+                rizanime sudah terinstall di perangkat kamu
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -95,7 +95,7 @@ const Install = () => {
               <span className="text-4xl font-bold text-white">S</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Install sakanan!me
+              Install rizanime
             </h1>
             <p className="text-lg text-muted-foreground">
               Akses cepat dari layar utama perangkat kamu
