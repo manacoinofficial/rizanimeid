@@ -47,9 +47,6 @@ import ComicSearch from "./pages/comic/ComicSearch";
 
 // News pages
 import NewsHome from "./pages/news/NewsHome";
-import NewsRubrik from "./pages/news/NewsRubrik";
-import NewsDetail from "./pages/news/NewsDetail";
-import NewsSearch from "./pages/news/NewsSearch";
 
 // Novel pages
 import NovelHome from "./pages/novel/NovelHome";
@@ -167,9 +164,6 @@ const App = () => {
 
                 {/* News Routes */}
                 <Route path="/news" element={<NewsHome />} />
-                <Route path="/news/rubrik/:rubrik" element={<NewsRubrik />} />
-                <Route path="/news/detail/:id/:slug" element={<NewsDetail />} />
-                <Route path="/news/search/:query" element={<NewsSearch />} />
 
                 {/* Novel Routes */}
                 <Route path="/novel" element={<NovelHome />} />
