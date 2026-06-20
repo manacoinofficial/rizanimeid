@@ -118,7 +118,7 @@ const SakanaAI = () => {
             <Sparkles className="h-8 w-8 text-white" />
           </div>
         </div>
-        <h1 className="text-4xl font-bold text-gradient mb-2">Sakana AI</h1>
+        <h1 className="text-4xl font-bold text-gradient mb-2">Rizanime AI</h1>
         <p className="text-muted-foreground">
           Chat dengan AI - Generate gambar, scan foto, identifikasi anime!
         </p>
@@ -145,7 +145,7 @@ const SakanaAI = () => {
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center text-muted-foreground">
                 <Bot className="h-12 w-12 mb-4 opacity-50" />
-                <p className="font-medium">Mulai percakapan dengan Sakana AI!</p>
+                <p className="font-medium">Mulai percakapan dengan Rizanime AI!</p>
                 <div className="mt-4 space-y-2 text-sm">
                   <p>🎨 "Generate gambar anime sunset"</p>
                   <p>📸 Upload foto untuk scan/identifikasi</p>
