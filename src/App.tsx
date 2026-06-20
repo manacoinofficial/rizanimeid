@@ -36,12 +36,6 @@ import JDrama from "./pages/anime/JDrama";
 import LiveAction from "./pages/anime/LiveAction";
 import DramaDetail from "./pages/anime/DramaDetail";
 
-// English Anime pages
-import EnAnimeHome from "./pages/en/anime/EnAnimeHome";
-import EnAnimeList from "./pages/en/anime/EnAnimeList";
-import EnAnimeSearch from "./pages/en/anime/EnAnimeSearch";
-import EnAnimeDetail from "./pages/en/anime/EnAnimeDetail";
-import EnAnimeEpisode from "./pages/en/anime/EnAnimeEpisode";
 import LiveActionDetail from "./pages/anime/LiveActionDetail";
 
 // Comic pages
@@ -98,13 +92,6 @@ import TvShowAll from "./pages/tvshow/TvShowAll";
 import TvShowSchedule from "./pages/tvshow/TvShowSchedule";
 import TvShowList from "./pages/tvshow/TvShowList";
 
-// DramaBox pages
-import DramaBoxHome from "./pages/dramabox/DramaBoxHome";
-import DramaBoxLatest from "./pages/dramabox/DramaBoxLatest";
-import DramaBoxSearch from "./pages/dramabox/DramaBoxSearch";
-import DramaBoxDetail from "./pages/dramabox/DramaBoxDetail";
-import DramaBoxWatch from "./pages/dramabox/DramaBoxWatch";
-
 // Library page
 import Library from "./pages/Library";
 import Install from "./pages/Install";
@@ -155,13 +142,6 @@ const App = () => {
                 <Route path="/anime/live-action" element={<LiveAction />} />
                 <Route path="/anime/drama/:slug" element={<DramaDetail />} />
                 <Route path="/anime/live-action/:slug" element={<LiveActionDetail />} />
-
-                {/* English Anime Routes */}
-                <Route path="/en/anime" element={<EnAnimeHome />} />
-                <Route path="/en/anime/list" element={<EnAnimeList />} />
-                <Route path="/en/anime/search" element={<EnAnimeSearch />} />
-                <Route path="/en/anime/detail/:id" element={<EnAnimeDetail />} />
-                <Route path="/en/anime/episode/:episodeId" element={<EnAnimeEpisode />} />
 
                 {/* Comic Routes */}
                 <Route path="/comic" element={<ComicHome />} />
@@ -228,13 +208,6 @@ const App = () => {
                 <Route path="/tvshow/all" element={<TvShowAll />} />
                 <Route path="/tvshow/schedule" element={<TvShowSchedule />} />
                 <Route path="/tvshow/list" element={<TvShowList />} />
-
-                {/* DramaBox Routes */}
-                <Route path="/dramabox" element={<DramaBoxHome />} />
-                <Route path="/dramabox/latest" element={<DramaBoxLatest />} />
-                <Route path="/dramabox/search" element={<DramaBoxSearch />} />
-                <Route path="/dramabox/detail/:bookId" element={<DramaBoxDetail />} />
-                <Route path="/dramabox/watch/:bookId/:episode" element={<DramaBoxWatch />} />
 
                 {/* Install PWA Route */}
                 <Route path="/install" element={<Install />} />
