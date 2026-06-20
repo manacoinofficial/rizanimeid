@@ -13,13 +13,12 @@ import { comicApi } from '@/lib/comicApi';
 import { mangasusukuApi, MangasusukuHomeResponse } from '@/lib/mangasusukuApi';
 import { novelApi } from '@/lib/novelApi';
 import { tvshowApi, extractShows } from '@/lib/tvshowApi';
-import { newsApi } from '@/lib/newsApi';
 
 interface SearchResult {
   id: string;
   title: string;
   image: string;
-  type: 'anime' | 'donghua' | 'comic' | 'mangasusuku' | 'novel' | 'tvshow' | 'news';
+  type: 'anime' | 'donghua' | 'comic' | 'mangasusuku' | 'novel' | 'tvshow';
   link: string;
   extra?: string;
 }
@@ -65,13 +64,6 @@ const UnifiedSearch = () => {
   const { data: tvshowData, isLoading: tvshowLoading } = useQuery({
     queryKey: ['search-tvshow', searchKeyword],
     queryFn: () => tvshowApi.search(searchKeyword),
-    enabled: !!searchKeyword,
-  });
-
-  // News search
-  const { data: newsData, isLoading: newsLoading } = useQuery({
-    queryKey: ['search-news', searchKeyword],
-    queryFn: () => newsApi.search(searchKeyword),
     enabled: !!searchKeyword,
   });
 
@@ -121,25 +113,15 @@ const UnifiedSearch = () => {
     extra: item.type,
   }));
 
-  const newsResults: SearchResult[] = (newsData?.data || newsData?.articles || []).map((item: any) => ({
-    id: item.id,
-    title: item.title,
-    image: item.image || '/placeholder.svg',
-    type: 'news' as const,
-    link: `/news/detail/${item.id}/${item.slug}`,
-    extra: item.category,
-  }));
-
   const allResults = [
     ...animeResults,
     ...donghuaResults,
     ...comicResults,
     ...novelResults,
     ...tvshowResults,
-    ...newsResults,
   ];
 
-  const isLoading = animeLoading || donghuaLoading || comicLoading || novelLoading || tvshowLoading || newsLoading;
+  const isLoading = animeLoading || donghuaLoading || comicLoading || novelLoading || tvshowLoading;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -156,7 +138,6 @@ const UnifiedSearch = () => {
       case 'mangasusuku': return <BookOpen className="h-3 w-3" />;
       case 'novel': return <BookOpen className="h-3 w-3" />;
       case 'tvshow': return <Monitor className="h-3 w-3" />;
-      case 'news': return <Newspaper className="h-3 w-3" />;
       default: return <Film className="h-3 w-3" />;
     }
   };
@@ -169,7 +150,6 @@ const UnifiedSearch = () => {
       case 'mangasusuku': return 'bg-pink-500';
       case 'novel': return 'bg-amber-500';
       case 'tvshow': return 'bg-cyan-500';
-      case 'news': return 'bg-orange-500';
       default: return 'bg-gray-500';
     }
   };
@@ -181,7 +161,6 @@ const UnifiedSearch = () => {
       case 'comic': return comicResults;
       case 'novel': return novelResults;
       case 'tvshow': return tvshowResults;
-      case 'news': return newsResults;
       default: return allResults;
     }
   };
@@ -244,9 +223,6 @@ const UnifiedSearch = () => {
                 </TabsTrigger>
                 <TabsTrigger value="tvshow" className="gap-1">
                   <Monitor className="h-3 w-3" /> TV Show <Badge variant="secondary" className="ml-1">{tvshowResults.length}</Badge>
-                </TabsTrigger>
-                <TabsTrigger value="news" className="gap-1">
-                  <Newspaper className="h-3 w-3" /> News <Badge variant="secondary" className="ml-1">{newsResults.length}</Badge>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
