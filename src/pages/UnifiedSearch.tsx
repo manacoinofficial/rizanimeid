@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Tv, Film, BookOpen, Newspaper, Play, Clapperboard, Monitor, Loader2 } from 'lucide-react';
+import { Search, Tv, Film, BookOpen, Newspaper, Play, Monitor, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +12,6 @@ import { api as donghuaApi } from '@/lib/api';
 import { comicApi } from '@/lib/comicApi';
 import { mangasusukuApi, MangasusukuHomeResponse } from '@/lib/mangasusukuApi';
 import { novelApi } from '@/lib/novelApi';
-import { dramaboxApi, extractDramaBoxItems } from '@/lib/dramaboxApi';
 import { tvshowApi, extractShows } from '@/lib/tvshowApi';
 import { newsApi } from '@/lib/newsApi';
 
@@ -20,7 +19,7 @@ interface SearchResult {
   id: string;
   title: string;
   image: string;
-  type: 'anime' | 'donghua' | 'comic' | 'mangasusuku' | 'novel' | 'dramabox' | 'tvshow' | 'news';
+  type: 'anime' | 'donghua' | 'comic' | 'mangasusuku' | 'novel' | 'tvshow' | 'news';
   link: string;
   extra?: string;
 }
@@ -59,13 +58,6 @@ const UnifiedSearch = () => {
   const { data: novelData, isLoading: novelLoading } = useQuery({
     queryKey: ['search-novel', searchKeyword],
     queryFn: () => novelApi.search(searchKeyword),
-    enabled: !!searchKeyword,
-  });
-
-  // DramaBox search
-  const { data: dramaboxData, isLoading: dramaboxLoading } = useQuery({
-    queryKey: ['search-dramabox', searchKeyword],
-    queryFn: () => dramaboxApi.search(searchKeyword),
     enabled: !!searchKeyword,
   });
 
@@ -120,15 +112,6 @@ const UnifiedSearch = () => {
     extra: item.rating,
   }));
 
-  const dramaboxResults: SearchResult[] = extractDramaBoxItems(dramaboxData).filter(item => item.bookId).map((item: any) => ({
-    id: item.bookId || item.id,
-    title: item.judul || item.title,
-    image: item.cover || item.poster || '/placeholder.svg',
-    type: 'dramabox' as const,
-    link: `/dramabox/detail/${item.bookId || item.id}`,
-    extra: item.total_episode,
-  }));
-
   const tvshowResults: SearchResult[] = extractShows(tvshowData).map((item: any) => ({
     id: item.id || item.slug,
     title: item.title,
@@ -152,12 +135,11 @@ const UnifiedSearch = () => {
     ...donghuaResults,
     ...comicResults,
     ...novelResults,
-    ...dramaboxResults,
     ...tvshowResults,
     ...newsResults,
   ];
 
-  const isLoading = animeLoading || donghuaLoading || comicLoading || novelLoading || dramaboxLoading || tvshowLoading || newsLoading;
+  const isLoading = animeLoading || donghuaLoading || comicLoading || novelLoading || tvshowLoading || newsLoading;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -173,7 +155,6 @@ const UnifiedSearch = () => {
       case 'comic': return <BookOpen className="h-3 w-3" />;
       case 'mangasusuku': return <BookOpen className="h-3 w-3" />;
       case 'novel': return <BookOpen className="h-3 w-3" />;
-      case 'dramabox': return <Clapperboard className="h-3 w-3" />;
       case 'tvshow': return <Monitor className="h-3 w-3" />;
       case 'news': return <Newspaper className="h-3 w-3" />;
       default: return <Film className="h-3 w-3" />;
@@ -187,7 +168,6 @@ const UnifiedSearch = () => {
       case 'comic': return 'bg-green-500';
       case 'mangasusuku': return 'bg-pink-500';
       case 'novel': return 'bg-amber-500';
-      case 'dramabox': return 'bg-red-500';
       case 'tvshow': return 'bg-cyan-500';
       case 'news': return 'bg-orange-500';
       default: return 'bg-gray-500';
@@ -200,7 +180,6 @@ const UnifiedSearch = () => {
       case 'donghua': return donghuaResults;
       case 'comic': return comicResults;
       case 'novel': return novelResults;
-      case 'dramabox': return dramaboxResults;
       case 'tvshow': return tvshowResults;
       case 'news': return newsResults;
       default: return allResults;
@@ -262,9 +241,6 @@ const UnifiedSearch = () => {
                 </TabsTrigger>
                 <TabsTrigger value="novel" className="gap-1">
                   <BookOpen className="h-3 w-3" /> Novel <Badge variant="secondary" className="ml-1">{novelResults.length}</Badge>
-                </TabsTrigger>
-                <TabsTrigger value="dramabox" className="gap-1">
-                  <Clapperboard className="h-3 w-3" /> DramaBox <Badge variant="secondary" className="ml-1">{dramaboxResults.length}</Badge>
                 </TabsTrigger>
                 <TabsTrigger value="tvshow" className="gap-1">
                   <Monitor className="h-3 w-3" /> TV Show <Badge variant="secondary" className="ml-1">{tvshowResults.length}</Badge>
