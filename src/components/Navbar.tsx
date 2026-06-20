@@ -40,7 +40,7 @@ export const Navbar = () => {
     { to: '/', label: 'Donghua', icon: Play },
     { to: '/anime', label: 'Anime', icon: Tv },
     { to: '/tvshow', label: 'TV Show', icon: Tv },
-    { to: '/sakanaai', label: 'SakanaAI', icon: Sparkles },
+    { to: '/sakanaai', label: 'Rizanime AI', icon: Sparkles },
   ];
 
   const readingLinks = [
@@ -73,11 +73,13 @@ export const Navbar = () => {
         <div className="flex h-16 items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-lg">
-              <span className="text-lg font-bold text-white">S</span>
-            </div>
+            <img
+              src="/icon.jpg"
+              alt="rizanime"
+              className="h-9 w-9 rounded-xl object-cover shadow-lg ring-1 ring-border"
+            />
             <span className="text-xl font-bold text-gradient hidden sm:block">
-              sakanan!me
+              rizanime
             </span>
           </Link>
 
