@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, X, Library, Tags, Clock, CheckCircle, Tv, Play, BookOpen, Newspaper, Clapperboard, Download, BookMarked, FileText, Sparkles, Send, Code, LogIn, LogOut, ShieldCheck, ChevronDown, User as UserIcon } from 'lucide-react';
+import { Search, Menu, X, Library, Tags, Clock, CheckCircle, Tv, Play, BookOpen, Newspaper, Download, BookMarked, FileText, Sparkles, Send, Code, LogIn, LogOut, ShieldCheck, ChevronDown, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -48,7 +48,6 @@ export const Navbar = () => {
     { to: '/mangasusuku', label: 'Mangasusuku', icon: BookMarked },
     { to: '/novel', label: 'Novel', icon: BookOpen },
     { to: '/news', label: 'Berita', icon: Newspaper },
-    { to: '/dramabox', label: 'Drama China', icon: Clapperboard },
   ];
 
   const browseLinks = [
