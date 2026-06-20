@@ -29,10 +29,12 @@ export const Footer = () => {
           {/* Brand */}
           <div className="col-span-2 md:col-span-4 lg:col-span-1 space-y-4">
             <div className="flex items-center gap-2">
-              <div className="h-10 w-10 rounded-xl bg-gradient-primary flex items-center justify-center shadow-lg">
-                <span className="text-xl font-bold text-primary-foreground">S</span>
-              </div>
-              <span className="text-xl font-bold text-gradient">sakanan!me</span>
+              <img
+                src="/icon.jpg"
+                alt="rizanime"
+                className="h-10 w-10 rounded-xl object-cover shadow-lg ring-1 ring-border"
+              />
+              <span className="text-xl font-bold text-gradient">rizanime</span>
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed">
               Platform hiburan untuk nonton Donghua, Anime, baca Comic & Novel dengan subtitle Indonesia.
@@ -117,10 +119,10 @@ export const Footer = () => {
 
         <div className="border-t mt-10 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Sakanan!me. All rights reserved.
+            © {new Date().getFullYear()} rizanime. All rights reserved.
           </p>
           <p className="text-sm text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="h-4 w-4 text-destructive fill-destructive" /> for sakananime Apis
+            Made with <Heart className="h-4 w-4 text-destructive fill-destructive" /> by rizanime
           </p>
         </div>
       </div>
