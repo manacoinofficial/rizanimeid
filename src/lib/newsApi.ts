@@ -1,6 +1,6 @@
 const BASE_URL = 'https://api.nexray.eu.cc/berita';
 
-export type NewsSource = 'jkt48' | 'ffnews' | 'antara' | 'cnbcindonesia' | 'mlbb';
+export type NewsSource = 'jkt48' | 'ffnews' | 'antara' | 'cnbcindonesia' | 'mlbb' | 'merdeka' | 'sindonews' | 'suara' | 'kompas';
 
 export interface NewsItem {
   title: string;
@@ -22,6 +22,8 @@ export interface NewsSourceMeta {
 
 export const NEWS_SOURCES: NewsSourceMeta[] = [
   { id: 'antara', label: 'Antara', description: 'Berita nasional & dunia' },
+  { id: 'merdeka', label: 'Merdeka', description: 'Berita Terbaru dari Merdeka' },
+  { id: 'sindonews', label: 'Sindonews', description: 'Berita Terbaru dari Sindonews' },
   { id: 'cnbcindonesia', label: 'CNBC Indonesia', description: 'Ekonomi & bisnis' },
   { id: 'jkt48', label: 'JKT48', description: 'Kabar idol JKT48' },
   { id: 'ffnews', label: 'Free Fire', description: 'Update game Free Fire' },
