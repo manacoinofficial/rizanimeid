@@ -1,11 +1,13 @@
-import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
+import { useVisitTracker } from "./hooks/useVisitTracker";
 import Home from "./pages/Home";
 import Ongoing from "./pages/Ongoing";
 import Completed from "./pages/Completed";
@@ -101,6 +103,11 @@ import Request from "./pages/Request";
 
 const queryClient = new QueryClient();
 
+const VisitTracker = () => {
+  useVisitTracker();
+  return null;
+};
+
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
@@ -108,6 +115,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <VisitTracker />
           <div className="flex flex-col min-h-screen">
             <Navbar />
             <main className="flex-1">
@@ -236,6 +244,8 @@ const App = () => {
             <Footer />
           </div>
         </BrowserRouter>
+        <Analytics />
+        <SpeedInsights />
       </TooltipProvider>
     </QueryClientProvider>
   );
