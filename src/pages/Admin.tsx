@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+// Navigate not needed: route is wrapped by ProtectedRoute
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Trash2, ShieldCheck, MessageSquare, Users, Eye, TrendingUp, Crown } from 'lucide-react';
+import { Loader2, Trash2, ShieldCheck, MessageSquare, Users, Eye, TrendingUp, Crown, Radio } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format, subDays, startOfDay } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -43,15 +43,15 @@ interface Visit {
 }
 
 export default function Admin() {
-  const { user, isAdmin, isOwner, isLoading: authLoading } = useAuth();
+  const { isOwner } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [roleMap, setRoleMap] = useState<Map<string, Set<string>>>(new Map());
   const [visits, setVisits] = useState<Visit[]>([]);
   const [loading, setLoading] = useState(true);
+  const [liveVisits, setLiveVisits] = useState<Visit[]>([]);
 
   useEffect(() => {
-    if (!isAdmin) return;
     (async () => {
       const since = subDays(new Date(), 30).toISOString();
       const [{ data: c }, { data: p }, { data: r }, { data: v }] = await Promise.all([
@@ -77,7 +77,26 @@ export default function Admin() {
       setVisits((v ?? []) as Visit[]);
       setLoading(false);
     })();
-  }, [isAdmin]);
+  }, []);
+
+  // Realtime: prepend new visits as they happen
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-visits')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'visits' },
+        (payload) => {
+          const v = payload.new as Visit;
+          setLiveVisits((prev) => [v, ...prev].slice(0, 30));
+          setVisits((prev) => [v, ...prev].slice(0, 3000));
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   // Build last-14-day visitor chart
   const chartData = useMemo(() => {
@@ -125,19 +144,6 @@ export default function Admin() {
     if (r?.has('admin')) return { text: 'Admin', cls: 'bg-primary/20 text-primary border-primary/40' };
     return { text: 'User', cls: 'bg-muted text-muted-foreground' };
   };
-
-  if (authLoading) {
-    return <div className="container mx-auto py-12 flex justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
-  }
-  if (!user) return <Navigate to="/auth" replace />;
-  if (!isAdmin) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold mb-2">Akses Ditolak</h1>
-        <p className="text-muted-foreground">Halaman ini hanya untuk admin.</p>
-      </div>
-    );
-  }
 
   const deleteComment = async (id: string) => {
     const { error } = await supabase.from('comments').delete().eq('id', id);
