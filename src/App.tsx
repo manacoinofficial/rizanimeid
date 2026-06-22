@@ -21,6 +21,8 @@ import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import Admin from "./pages/Admin";
 import Tentang from "./pages/Tentang";
+import Profile from "./pages/Profile";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 // Anime pages
 import AnimeHome from "./pages/anime/AnimeHome";
@@ -223,7 +225,22 @@ const App = () => {
                 <Route path="/auth" element={<Auth />} />
                 <Route path="/login" element={<Navigate to="/auth" replace />} />
                 <Route path="/register" element={<Navigate to="/auth" replace />} />
-                <Route path="/admin" element={<Admin />} />
+                <Route
+                  path="/admin"
+                  element={
+                    <ProtectedRoute requireAdmin>
+                      <Admin />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <Profile />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/tentang" element={<Tentang />} />
                 <Route path="/about" element={<Navigate to="/tentang" replace />} />
 
