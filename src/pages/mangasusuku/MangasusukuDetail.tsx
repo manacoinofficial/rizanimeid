@@ -29,6 +29,14 @@ const MangasusukuDetail = () => {
   const synopsis = detail?.synopsis || detail?.description || '';
   const chapters = detail?.chapters || [];
 
+  // Cache chapter slug list so the reader can compute prev/next as fallback
+  if (typeof window !== 'undefined' && slug && chapters.length > 0) {
+    try {
+      const list = chapters.map((c: any) => c.slug).filter(Boolean);
+      sessionStorage.setItem(`msu-chap-list:${slug}`, JSON.stringify(list));
+    } catch {}
+  }
+
   const handleFavoriteClick = () => {
     if (detail) {
       toggleFavorite({
