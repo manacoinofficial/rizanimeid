@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { Search, Tv, Film, BookOpen, Play, Monitor, Loader2 } from 'lucide-react';
+import { Search, Tv, Film, BookOpen, Play, Monitor, Loader2, BookMarked } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { animeApi } from '@/lib/animeApi';
 import { api as donghuaApi } from '@/lib/api';
 import { comicApi } from '@/lib/comicApi';
-import { mangasusukuApi, MangasusukuHomeResponse } from '@/lib/mangasusukuApi';
+import { mangasusukuApi, extractMangasusukuItems } from '@/lib/mangasusukuApi';
 import { novelApi } from '@/lib/novelApi';
 import { tvshowApi, extractShows } from '@/lib/tvshowApi';
 
@@ -67,6 +67,29 @@ const UnifiedSearch = () => {
     enabled: !!searchKeyword,
   });
 
+  // Mangasusuku search (no dedicated endpoint -> fallback: filter list/popular)
+  const { data: msuData, isLoading: msuLoading } = useQuery({
+    queryKey: ['search-mangasusuku', searchKeyword],
+    queryFn: async () => {
+      // attempt search endpoint, fallback to list filtering
+      try {
+        const res = await fetch(
+          `https://www.sankavollerei.web.id/comic/mangasusuku/search/${encodeURIComponent(searchKeyword)}`
+        );
+        if (res.ok) {
+          const j = await res.json();
+          const items = extractMangasusukuItems(j);
+          if (items.length) return items;
+        }
+      } catch {}
+      const list = await mangasusukuApi.getList(1);
+      const items = extractMangasusukuItems(list);
+      const q = searchKeyword.toLowerCase();
+      return items.filter((i: any) => (i.title || '').toLowerCase().includes(q));
+    },
+    enabled: !!searchKeyword,
+  });
+
   // Process results
   const animeResults: SearchResult[] = (animeData?.data?.animeList || []).map((item: any) => ({
     id: item.animeId,
@@ -113,15 +136,25 @@ const UnifiedSearch = () => {
     extra: item.type,
   }));
 
+  const msuResults: SearchResult[] = (msuData || []).map((item: any) => ({
+    id: item.slug,
+    title: item.title,
+    image: item.cover || item.image || '/placeholder.svg',
+    type: 'mangasusuku' as const,
+    link: `/mangasusuku/detail/${item.slug}`,
+    extra: item.chapter,
+  }));
+
   const allResults = [
     ...animeResults,
     ...donghuaResults,
     ...comicResults,
+    ...msuResults,
     ...novelResults,
     ...tvshowResults,
   ];
 
-  const isLoading = animeLoading || donghuaLoading || comicLoading || novelLoading || tvshowLoading;
+  const isLoading = animeLoading || donghuaLoading || comicLoading || novelLoading || tvshowLoading || msuLoading;
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -159,6 +192,7 @@ const UnifiedSearch = () => {
       case 'anime': return animeResults;
       case 'donghua': return donghuaResults;
       case 'comic': return comicResults;
+      case 'mangasusuku': return msuResults;
       case 'novel': return novelResults;
       case 'tvshow': return tvshowResults;
       default: return allResults;
@@ -217,6 +251,9 @@ const UnifiedSearch = () => {
                 </TabsTrigger>
                 <TabsTrigger value="comic" className="gap-1">
                   <BookOpen className="h-3 w-3" /> Comic <Badge variant="secondary" className="ml-1">{comicResults.length}</Badge>
+                </TabsTrigger>
+                <TabsTrigger value="mangasusuku" className="gap-1">
+                  <BookMarked className="h-3 w-3" /> Mangasusuku <Badge variant="secondary" className="ml-1">{msuResults.length}</Badge>
                 </TabsTrigger>
                 <TabsTrigger value="novel" className="gap-1">
                   <BookOpen className="h-3 w-3" /> Novel <Badge variant="secondary" className="ml-1">{novelResults.length}</Badge>

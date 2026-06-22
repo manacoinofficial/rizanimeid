@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Navigate } from 'react-router-dom';
+// Navigate not needed: route is wrapped by ProtectedRoute
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, Trash2, ShieldCheck, MessageSquare, Users, Eye, TrendingUp, Crown } from 'lucide-react';
+import { Loader2, Trash2, ShieldCheck, MessageSquare, Users, Eye, TrendingUp, Crown, Radio } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow, format, subDays, startOfDay } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -43,15 +43,15 @@ interface Visit {
 }
 
 export default function Admin() {
-  const { user, isAdmin, isOwner, isLoading: authLoading } = useAuth();
+  const { isOwner } = useAuth();
   const [comments, setComments] = useState<Comment[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [roleMap, setRoleMap] = useState<Map<string, Set<string>>>(new Map());
   const [visits, setVisits] = useState<Visit[]>([]);
   const [loading, setLoading] = useState(true);
+  const [liveVisits, setLiveVisits] = useState<Visit[]>([]);
 
   useEffect(() => {
-    if (!isAdmin) return;
     (async () => {
       const since = subDays(new Date(), 30).toISOString();
       const [{ data: c }, { data: p }, { data: r }, { data: v }] = await Promise.all([
@@ -77,7 +77,26 @@ export default function Admin() {
       setVisits((v ?? []) as Visit[]);
       setLoading(false);
     })();
-  }, [isAdmin]);
+  }, []);
+
+  // Realtime: prepend new visits as they happen
+  useEffect(() => {
+    const channel = supabase
+      .channel('admin-visits')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'visits' },
+        (payload) => {
+          const v = payload.new as Visit;
+          setLiveVisits((prev) => [v, ...prev].slice(0, 30));
+          setVisits((prev) => [v, ...prev].slice(0, 3000));
+        }
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   // Build last-14-day visitor chart
   const chartData = useMemo(() => {
@@ -125,19 +144,6 @@ export default function Admin() {
     if (r?.has('admin')) return { text: 'Admin', cls: 'bg-primary/20 text-primary border-primary/40' };
     return { text: 'User', cls: 'bg-muted text-muted-foreground' };
   };
-
-  if (authLoading) {
-    return <div className="container mx-auto py-12 flex justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
-  }
-  if (!user) return <Navigate to="/auth" replace />;
-  if (!isAdmin) {
-    return (
-      <div className="container mx-auto px-4 py-12 text-center">
-        <h1 className="text-2xl font-bold mb-2">Akses Ditolak</h1>
-        <p className="text-muted-foreground">Halaman ini hanya untuk admin.</p>
-      </div>
-    );
-  }
 
   const deleteComment = async (id: string) => {
     const { error } = await supabase.from('comments').delete().eq('id', id);
@@ -267,11 +273,32 @@ export default function Admin() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                  </span>
+                  <Radio className="h-4 w-4 text-emerald-500" /> Live ({liveVisits.length}) ·
                   <Eye className="h-5 w-5" /> Pengunjung Terbaru ({recentVisitors.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 max-h-[480px] overflow-y-auto">
+                  {liveVisits.map((v) => {
+                    const p = v.user_id ? profileById.get(v.user_id) : null;
+                    const name = p?.display_name || (v.user_id ? 'User' : 'Tamu (anonim)');
+                    return (
+                      <div key={`live-${v.id}`} className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium truncate flex items-center gap-2">
+                            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            {name}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">{v.path}</div>
+                        </div>
+                        <div className="text-[10px] uppercase tracking-wide text-emerald-500 shrink-0">LIVE</div>
+                      </div>
+                    );
+                  })}
                   {recentVisitors.map((v) => {
                     const p = v.user_id ? profileById.get(v.user_id) : null;
                     const name = p?.display_name || (v.user_id ? 'User' : 'Tamu (anonim)');

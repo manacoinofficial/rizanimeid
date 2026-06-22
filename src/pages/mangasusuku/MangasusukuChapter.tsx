@@ -44,8 +44,24 @@ const MangasusukuChapter = () => {
     return null;
   };
   
-  const prevSlug = extractSlug(navPrev);
-  const nextSlug = extractSlug(navNext);
+  let prevSlug = extractSlug(navPrev);
+  let nextSlug = extractSlug(navNext);
+
+  // Fallback: compute from cached chapter list stored by MangasusukuDetail
+  if ((!prevSlug || !nextSlug) && mangaSlug && slug) {
+    try {
+      const cached = sessionStorage.getItem(`msu-chap-list:${mangaSlug}`);
+      if (cached) {
+        const list: string[] = JSON.parse(cached);
+        // list is typically newest-first (chapter 100 -> 1)
+        const idx = list.indexOf(slug);
+        if (idx >= 0) {
+          if (!nextSlug && idx - 1 >= 0) nextSlug = list[idx - 1];
+          if (!prevSlug && idx + 1 < list.length) prevSlug = list[idx + 1];
+        }
+      }
+    } catch {}
+  }
 
   useEffect(() => {
     if (chapter && slug && mangaSlug) {
