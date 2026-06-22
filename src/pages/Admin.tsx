@@ -273,11 +273,32 @@ export default function Admin() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                  </span>
+                  <Radio className="h-4 w-4 text-emerald-500" /> Live ({liveVisits.length}) ·
                   <Eye className="h-5 w-5" /> Pengunjung Terbaru ({recentVisitors.length})
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 max-h-[480px] overflow-y-auto">
+                  {liveVisits.map((v) => {
+                    const p = v.user_id ? profileById.get(v.user_id) : null;
+                    const name = p?.display_name || (v.user_id ? 'User' : 'Tamu (anonim)');
+                    return (
+                      <div key={`live-${v.id}`} className="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-between gap-3">
+                        <div className="min-w-0">
+                          <div className="text-sm font-medium truncate flex items-center gap-2">
+                            <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                            {name}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">{v.path}</div>
+                        </div>
+                        <div className="text-[10px] uppercase tracking-wide text-emerald-500 shrink-0">LIVE</div>
+                      </div>
+                    );
+                  })}
                   {recentVisitors.map((v) => {
                     const p = v.user_id ? profileById.get(v.user_id) : null;
                     const name = p?.display_name || (v.user_id ? 'User' : 'Tamu (anonim)');
