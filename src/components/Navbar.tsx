@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Search, Menu, X, Library, Tags, Clock, CheckCircle, Tv, Play, BookOpen, Newspaper, Download, BookMarked, FileText, Sparkles, Send, Code, LogIn, LogOut, ShieldCheck, ChevronDown, User as UserIcon } from 'lucide-react';
+import { Search, Menu, X, Library, Tags, Clock, CheckCircle, Tv, Play, BookOpen, Newspaper, Download, BookMarked, FileText, Sparkles, Send, Code, LogIn, LogOut, ShieldCheck, ChevronDown, User as UserIcon, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -186,6 +186,12 @@ export const Navbar = () => {
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem asChild>
+                    <Link to="/profile" className="cursor-pointer">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Profil
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
                     <Link to="/library" className="cursor-pointer">
                       <Library className="h-4 w-4 mr-2" />
                       Library
@@ -291,6 +297,14 @@ export const Navbar = () => {
                       Admin Panel
                     </Link>
                   )}
+                  <Link
+                    to="/profile"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium bg-secondary/50 hover:bg-secondary text-foreground rounded-lg"
+                  >
+                    <Settings className="h-4 w-4" />
+                    Profil
+                  </Link>
                   <Button variant="outline" size="sm" className="w-full gap-2" onClick={() => { signOut(); setMobileMenuOpen(false); }}>
                     <LogOut className="h-4 w-4" />
                     Logout
