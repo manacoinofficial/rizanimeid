@@ -51,7 +51,7 @@ export default function Tentang() {
           </p>
           <Button asChild size="lg" className="w-full sm:w-auto gap-2">
             <a
-              href="https://qris.zone.id/rizastore?payment_id=rizastore-fxi5sziq"
+              href="https://qris.zone.id/rizastore"
               target="_blank"
               rel="noopener noreferrer"
             >
