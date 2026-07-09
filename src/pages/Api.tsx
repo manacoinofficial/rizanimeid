@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Code, Server, Zap } from "lucide-react";
 
-const BASE_URL = "https://sakananime.vercel.app";
+const BASE_URL = "https://rizanime.my.id";
 
 interface EndpointInfo {
   method: string;
