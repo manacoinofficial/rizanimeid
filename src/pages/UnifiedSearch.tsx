@@ -90,8 +90,10 @@ const UnifiedSearch = () => {
     enabled: !!searchKeyword,
   });
 
+  const toArr = (v: any): any[] => (Array.isArray(v) ? v : []);
+
   // Process results
-  const animeResults: SearchResult[] = (animeData?.data?.animeList || []).map((item: any) => ({
+  const animeResults: SearchResult[] = toArr(animeData?.data?.animeList).map((item: any) => ({
     id: item.animeId,
     title: item.title,
     image: item.poster || '/placeholder.svg',
@@ -100,7 +102,7 @@ const UnifiedSearch = () => {
     extra: item.score,
   }));
 
-  const donghuaResults: SearchResult[] = (donghuaData?.data || []).map((item: any) => ({
+  const donghuaResults: SearchResult[] = toArr(donghuaData?.data).map((item: any) => ({
     id: item.slug,
     title: item.title,
     image: item.poster || '/placeholder.svg',
@@ -109,7 +111,9 @@ const UnifiedSearch = () => {
     extra: item.status,
   }));
 
-  const comicResults: SearchResult[] = (comicData?.data || comicData?.comics || []).map((item: any) => ({
+  const comicResults: SearchResult[] = toArr(
+    Array.isArray(comicData?.data) ? comicData?.data : comicData?.comics
+  ).map((item: any) => ({
     id: item.slug,
     title: item.title,
     image: item.cover || item.image || '/placeholder.svg',
@@ -118,7 +122,9 @@ const UnifiedSearch = () => {
     extra: item.chapter,
   }));
 
-  const novelResults: SearchResult[] = (novelData?.data || novelData?.novels || []).map((item: any) => ({
+  const novelResults: SearchResult[] = toArr(
+    Array.isArray(novelData?.data) ? novelData?.data : novelData?.novels
+  ).map((item: any) => ({
     id: item.slug,
     title: item.title,
     image: item.image || '/placeholder.svg',
@@ -127,7 +133,7 @@ const UnifiedSearch = () => {
     extra: item.rating,
   }));
 
-  const tvshowResults: SearchResult[] = extractShows(tvshowData).map((item: any) => ({
+  const tvshowResults: SearchResult[] = toArr(extractShows(tvshowData)).map((item: any) => ({
     id: item.id || item.slug,
     title: item.title,
     image: item.poster || item.image || '/placeholder.svg',
@@ -136,7 +142,7 @@ const UnifiedSearch = () => {
     extra: item.type,
   }));
 
-  const msuResults: SearchResult[] = (msuData || []).map((item: any) => ({
+  const msuResults: SearchResult[] = toArr(msuData).map((item: any) => ({
     id: item.slug,
     title: item.title,
     image: item.cover || item.image || '/placeholder.svg',
