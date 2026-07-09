@@ -1,11 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User, Loader2, Sparkles, Image as ImageIcon, RefreshCw, Upload, X, Camera } from 'lucide-react';
+import { Send, Bot, User, Loader2, Sparkles, Image as ImageIcon, RefreshCw, X, Camera, Shuffle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { cecanUrl, animeUrl, ANIME_TYPES, CHAT_KEYWORDS, CecanCountry, CECAN_LABEL } from '@/lib/randomImageApi';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -28,6 +30,20 @@ const SakanaAI = () => {
     }
   }, [messages]);
 
+  const pushRandomMessage = (image: string, caption: string) => {
+    setMessages(prev => [...prev, { role: 'assistant', content: caption, image }]);
+  };
+
+  const runCecan = (country: CecanCountry) => {
+    const url = cecanUrl(country);
+    pushRandomMessage(url, `Random ${CECAN_LABEL[country]} ✨`);
+  };
+
+  const runRandomAnime = (type: string) => {
+    const url = animeUrl(type);
+    pushRandomMessage(url, `Random anime · ${type}`);
+  };
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -46,6 +62,16 @@ const SakanaAI = () => {
 
   const sendMessage = async () => {
     if ((!input.trim() && !uploadedImage) || isLoading) return;
+
+    // Keyword shortcut — bypass AI, fetch random image directly.
+    const kw = input.trim().toLowerCase();
+    if (!uploadedImage && CHAT_KEYWORDS[kw]) {
+      const { country, label } = CHAT_KEYWORDS[kw];
+      setMessages(prev => [...prev, { role: 'user', content: input }]);
+      setInput('');
+      pushRandomMessage(cecanUrl(country), `Random ${label} ✨`);
+      return;
+    }
 
     const userMessage: Message = { 
       role: 'user', 
