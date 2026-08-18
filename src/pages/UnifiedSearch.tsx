@@ -98,7 +98,7 @@ const UnifiedSearch = () => {
     title: item.title,
     image: item.poster || '/placeholder.svg',
     type: 'anime' as const,
-    link: `/anime/${item.animeId}`,
+    link: `/anime/detail/${item.animeId}`,
     extra: item.score,
   }));
 
